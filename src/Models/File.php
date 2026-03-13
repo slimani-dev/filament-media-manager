@@ -12,6 +12,21 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * @property int $id
+ * @property int|null $uploaded_by_user_id
+ * @property int|null $folder_id
+ * @property string $name
+ * @property string|null $caption
+ * @property string|null $alt_text
+ * @property int $size
+ * @property string $extension
+ * @property string $mime_type
+ * @property int|null $width
+ * @property int|null $height
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ */
 class File extends Model implements HasMedia
 {
     use HasFactory;

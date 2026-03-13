@@ -1,30 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to static method factory\(\) on an unknown class App\\Models\\User\.$#'
-			identifier: class.notFound
-			count: 1
-			path: database/seeders/MediaSeeder.php
-
-		-
-			message: '#^Call to static method first\(\) on an unknown class App\\Models\\User\.$#'
-			identifier: class.notFound
-			count: 1
-			path: database/seeders/MediaSeeder.php
-
-		-
-			message: '#^Parameter \$isAccepted of method Slimani\\MediaManager\\Components\\MediaItem\:\:isAccepted\(\) has invalid type Slimani\\MediaManager\\Components\\Closure\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Components/MediaItem.php
-
-		-
-			message: '#^Parameter \$isPicker of method Slimani\\MediaManager\\Components\\MediaItem\:\:isPicker\(\) has invalid type Slimani\\MediaManager\\Components\\Closure\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Components/MediaItem.php
-
-		-
 			message: '#^Property Slimani\\MediaManager\\Components\\Section\:\:\$view \(view\-string\) does not accept default value of type string\.$#'
 			identifier: property.defaultValue
 			count: 1
@@ -35,24 +11,6 @@ parameters:
 			identifier: trait.unused
 			count: 1
 			path: src/Concerns/InteractsWithMediaFiles.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Slimani\\MediaManager\\Models\\File\>\|Slimani\\MediaManager\\Models\\File\:\:\$mime_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Form/Components/MediaFileUpload.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Slimani\\MediaManager\\Models\\File\>\|Slimani\\MediaManager\\Models\\File\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Form/Components/MediaFileUpload.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Slimani\\MediaManager\\Models\\File\>\|Slimani\\MediaManager\\Models\\File\:\:\$size\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Form/Components/MediaFileUpload.php
 
 		-
 			message: '#^Anonymous function never returns null so it can be removed from the return type\.$#'
@@ -70,18 +28,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
-			path: src/Form/MediaPicker.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$mime_type\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Form/MediaPicker.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 1
 			path: src/Form/MediaPicker.php
 
 		-
@@ -133,78 +79,9 @@ parameters:
 			path: src/Infolists/Components/RepeatableEntry.php
 
 		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$caption\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$created_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$extension\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$folder_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$mime_type\.$#'
-			identifier: property.notFound
-			count: 4
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\File\:\:\$size\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\Folder\:\:\$created_at\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\Folder\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Access to an undefined property Slimani\\MediaManager\\Models\\Folder\:\:\$parent_id\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Livewire/MediaBrowser.php
-
-		-
 			message: '#^Call to an undefined method Filament\\Contracts\\Plugin\:\:getDisk\(\)\.$#'
 			identifier: method.notFound
 			count: 2
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '''
-				#^Call to deprecated method form\(\) of class Filament\\Actions\\Action\:
-				Use `schema\(\) instead\.$#
-			'''
-			identifier: method.deprecated
-			count: 1
 			path: src/Livewire/MediaBrowser.php
 
 		-

@@ -13,6 +13,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Section extends BaseSection
 {
+    /** @var view-string */
     protected string $view = 'media-manager::filament.components.section';
 
     const BEFORE_HEADER_SCHEMA_KEY = 'before_header';

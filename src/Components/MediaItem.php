@@ -2,6 +2,7 @@
 
 namespace Slimani\MediaManager\Components;
 
+use Closure;
 use Filament\Schemas\Components\Component;
 use Slimani\MediaManager\Models\File;
 use Slimani\MediaManager\Models\Folder;

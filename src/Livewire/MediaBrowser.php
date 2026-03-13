@@ -434,7 +434,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                             ->visible(fn () => $this->showFilters)
                             ->columnSpanFull(),
                         \Slimani\MediaManager\Components\Section::make()
-                            ->heading(view('media-manager::components.breadcrumbs', ['breadcrumbs' => $this->breadcrumbs]))
+                            ->heading(view(/** @var view-string */ 'media-manager::components.breadcrumbs', ['breadcrumbs' => $this->breadcrumbs]))
                             ->columnSpan(fn () => ['lg' => $this->showDetails ? 3 : 4]) // Dynamic Column Span
                             ->extraAttributes([
                                 'class' => 'fi-media-grid-container',
@@ -465,7 +465,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                     ->visible(fn () => $this->getItemsProperty()->isEmpty()),
 
                                 ViewEntry::make('pagination')
-                                    ->view('media-manager::filament.pages.media-manager.pagination')
+                                    ->view(/** @var view-string */ 'media-manager::filament.pages.media-manager.pagination')
                                     ->viewData(['paginator' => $this->getItemsProperty()])
                                     ->visible(fn () => $this->getItemsProperty()->total() > 0),
                             ])
@@ -1310,7 +1310,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
             ->label('Move')
             ->icon(Heroicon::FolderArrowDown)
             ->color('gray')
-            ->form([
+            ->schema([
                 Select::make('folder_id')
                     ->label('Target Folder')
                     ->options(function () {

@@ -22,6 +22,7 @@ class MediaFileUpload extends FileUpload
                 return null;
             }
 
+            /** @var File|null $fileModel */
             $fileModel = File::find($file);
 
             if (! $fileModel) {
@@ -62,7 +63,7 @@ class MediaFileUpload extends FileUpload
             Action::make('browse')
                 ->label('Browse')
                 ->icon('heroicon-m-folder')
-                ->modalContent(fn (MediaFileUpload $component) => view('media-manager::forms.components.media-browser-modal', [
+                ->modalContent(fn (MediaFileUpload $component) => view(/** @var view-string */ 'media-manager::forms.components.media-browser-modal', [
                     'statePath' => $component->getStatePath(),
                 ]))
                 ->modalSubmitAction(false)

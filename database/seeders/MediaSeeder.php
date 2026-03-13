@@ -2,7 +2,6 @@
 
 namespace Slimani\MediaManager\Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File as FileFacade;
@@ -29,7 +28,8 @@ class MediaSeeder extends Seeder
             return Tag::create(['name' => $name]);
         });
 
-        $user = User::first() ?? User::factory()->create(['email' => 'admin@example.com']);
+        $userModel = config('auth.providers.users.model');
+        $user = $userModel::first() ?? $userModel::factory()->create(['email' => 'admin@example.com']);
 
         // 1. Root Folders
         $folders = [
