@@ -2,10 +2,10 @@
 
 namespace Slimani\MediaManager\Tests;
 
-use Slimani\MediaManager\Tests\Models\User;
 use Livewire\Livewire;
 use Slimani\MediaManager\Models\File;
 use Slimani\MediaManager\Tests\Components\TestMediaPickerRelationshipForm;
+use Slimani\MediaManager\Tests\Models\User;
 
 uses(TestCase::class);
 

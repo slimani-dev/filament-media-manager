@@ -26,6 +26,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -1620,7 +1621,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
             ->send();
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('media-manager::livewire.media-browser');
     }

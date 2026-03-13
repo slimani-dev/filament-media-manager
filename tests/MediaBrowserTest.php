@@ -2,13 +2,13 @@
 
 namespace Slimani\MediaManager\Tests;
 
-use Slimani\MediaManager\Tests\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Slimani\MediaManager\Livewire\MediaBrowser;
 use Slimani\MediaManager\Models\File;
 use Slimani\MediaManager\Models\Folder;
+use Slimani\MediaManager\Tests\Models\User;
 
 uses(TestCase::class);
 

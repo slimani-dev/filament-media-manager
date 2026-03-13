@@ -2,28 +2,34 @@
 
 namespace Slimani\MediaManager\Tests;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Orchestra\Testbench\TestCase as Orchestra;
-use Slimani\MediaManager\MediaManagerServiceProvider;
-use Filament\FilamentServiceProvider;
-use Livewire\LivewireServiceProvider;
-use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
-use Filament\Support\SupportServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
+use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
-use Filament\Schemas\SchemasServiceProvider;
-use Filament\Widgets\WidgetsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\ViewErrorBag;
-use Illuminate\Support\MessageBag;
-use Slimani\MediaManager\Tests\Models\User;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Schemas\SchemasServiceProvider;
+use Filament\Support\SupportServiceProvider;
+use Filament\Widgets\WidgetsServiceProvider;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\MessageBag;
+use Illuminate\Support\ViewErrorBag;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Livewire\LivewireServiceProvider;
+use Livewire\Mechanisms\DataStore;
+use Orchestra\Testbench\TestCase as Orchestra;
+use Slimani\MediaManager\MediaManagerPlugin;
+use Slimani\MediaManager\MediaManagerServiceProvider;
+use Slimani\MediaManager\Tests\Models\User;
+use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 class TestPanelProvider extends PanelProvider
 {
@@ -32,7 +38,7 @@ class TestPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('test')
-            ->plugin(\Slimani\MediaManager\MediaManagerPlugin::make());
+            ->plugin(MediaManagerPlugin::make());
     }
 }
 
@@ -62,7 +68,7 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         Schema::create('users', function ($table) {
             $table->id();
@@ -102,7 +108,7 @@ class TestCase extends Orchestra
 
     protected function getEnvironmentSetUp($app)
     {
-        $app['view']->addNamespace('media-manager', __DIR__ . '/../resources/views');
+        $app['view']->addNamespace('media-manager', __DIR__.'/../resources/views');
 
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
@@ -110,22 +116,22 @@ class TestCase extends Orchestra
             'database' => ':memory:',
             'prefix' => '',
         ]);
-        
+
         $app['config']->set('app.key', 'base64:2fl+Ktvkfl+Fuz4Qhye60lD0Iarr+G7H9j6h7P5q3Cs=');
-        
-        $storagePath = __DIR__ . '/storage';
+
+        $storagePath = __DIR__.'/storage';
         $app['config']->set('session.driver', 'file');
-        $app['config']->set('session.files', $storagePath . '/framework/sessions');
-        $app['config']->set('view.compiled', $storagePath . '/framework/views');
+        $app['config']->set('session.files', $storagePath.'/framework/sessions');
+        $app['config']->set('view.compiled', $storagePath.'/framework/views');
         $app['config']->set('cache.default', 'file');
-        $app['config']->set('cache.stores.file.path', $storagePath . '/framework/cache');
-        
+        $app['config']->set('cache.stores.file.path', $storagePath.'/framework/cache');
+
         $app['config']->set('auth.providers.users.model', User::class);
 
-        $app->singleton(\Livewire\Mechanisms\DataStore::class);
+        $app->singleton(DataStore::class);
 
-        $app->make(\Illuminate\Contracts\Http\Kernel::class)->prependMiddleware(\Illuminate\Session\Middleware\StartSession::class);
-        $app->make(\Illuminate\Contracts\Http\Kernel::class)->prependMiddleware(\Illuminate\View\Middleware\ShareErrorsFromSession::class);
+        $app->make(Kernel::class)->prependMiddleware(StartSession::class);
+        $app->make(Kernel::class)->prependMiddleware(ShareErrorsFromSession::class);
     }
 
     protected function setUp(): void
@@ -134,19 +140,19 @@ class TestCase extends Orchestra
 
         $compiledPath = config('view.compiled');
         if (is_dir($compiledPath)) {
-            foreach (glob($compiledPath . '/*') as $file) {
+            foreach (glob($compiledPath.'/*') as $file) {
                 if (is_file($file)) {
                     unlink($file);
                 }
             }
         }
-        
-        \Illuminate\Support\Facades\Session::start();
-        \Illuminate\Support\Facades\Session::flush();
 
-        $errorBag = new ViewErrorBag();
-        $errorBag->put('default', new MessageBag());
-        
+        Session::start();
+        Session::flush();
+
+        $errorBag = new ViewErrorBag;
+        $errorBag->put('default', new MessageBag);
+
         View::share('errors', $errorBag);
     }
 }

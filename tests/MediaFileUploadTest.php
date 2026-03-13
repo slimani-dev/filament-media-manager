@@ -2,9 +2,9 @@
 
 namespace Slimani\MediaManager\Tests;
 
-use Slimani\MediaManager\Tests\Models\User;
 use Livewire\Livewire;
 use Slimani\MediaManager\Tests\Components\TestMediaFileUploadForm;
+use Slimani\MediaManager\Tests\Models\User;
 
 uses(TestCase::class);
 

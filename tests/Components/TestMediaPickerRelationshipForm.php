@@ -2,12 +2,12 @@
 
 namespace Slimani\MediaManager\Tests\Components;
 
-use Slimani\MediaManager\Tests\Models\User;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Schema;
 use Livewire\Component;
 use Slimani\MediaManager\Form\MediaPicker;
+use Slimani\MediaManager\Tests\Models\User;
 
 class TestMediaPickerRelationshipForm extends Component implements HasForms
 {

@@ -2,7 +2,6 @@
 
 namespace Slimani\MediaManager\Tests;
 
-use Slimani\MediaManager\Tests\TestCase;
 use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -23,17 +22,17 @@ class TestSectionComponent extends Component implements HasForms
             ->schema([
                 Section::make()
                     ->heading([
-                         Action::make('headingAction')
-                            ->label('Heading Action')
+                        Action::make('headingAction')
+                            ->label('Heading Action'),
                     ])
                     ->beforeHeader([
-                         Action::make('goUp')
+                        Action::make('goUp')
                             ->label('Up Button')
-                            ->icon('heroicon-m-arrow-left')
+                            ->icon('heroicon-m-arrow-left'),
                     ])
                     ->afterHeader([
-                         Action::make('otherAction')
-                            ->label('Other Action')
+                        Action::make('otherAction')
+                            ->label('Other Action'),
                     ]),
             ]);
     }
