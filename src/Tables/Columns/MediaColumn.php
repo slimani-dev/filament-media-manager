@@ -3,6 +3,7 @@
 namespace Slimani\MediaManager\Tables\Columns;
 
 use Filament\Tables\Columns\Column;
+use Illuminate\Support\Collection;
 use Slimani\MediaManager\Models\File;
 
 class MediaColumn extends Column
@@ -18,7 +19,7 @@ class MediaColumn extends Column
 
         $file = $state instanceof File ? $state : File::find($state);
 
-        if ($file instanceof \Illuminate\Support\Collection) {
+        if ($file instanceof Collection) {
             $file = $file->first();
         }
 
