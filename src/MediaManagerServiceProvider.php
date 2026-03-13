@@ -40,6 +40,6 @@ class MediaManagerServiceProvider extends PackageServiceProvider
 
         FilamentAsset::register([
             Css::make('media-manager-styles', __DIR__.'/../resources/css/media-manager.css')->loadedOnRequest(),
-        ], 'moh/media-manager');
+        ], 'slimani/media-manager');
     }
 }

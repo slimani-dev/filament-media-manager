@@ -18,6 +18,7 @@ class MediaUploadService
         $fileModel = File::create([
             'folder_id' => $folder?->id,
             'uploaded_by_user_id' => $userId,
+            'name' => $metadata['name'] ?? $file->getClientOriginalName(),
             'caption' => $metadata['caption'] ?? $file->getClientOriginalName(),
             'alt_text' => $metadata['alt_text'] ?? $file->getClientOriginalName(),
         ]);
