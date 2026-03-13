@@ -5,6 +5,11 @@ All notable changes to `filament-media-manager` will be documented in this file.
 ## v0.2.4 - 2026-03-13
 
 ### Changed
+- Refined feature ordering and credits in README.
+
+## v0.2.4 - 2026-03-13
+
+### Changed
 - Reordered README sections to prioritize feature highlights.
 
 ## v0.2.3 - 2026-03-13
