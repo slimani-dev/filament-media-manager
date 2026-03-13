@@ -8,6 +8,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -443,6 +444,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                             ->schema([
 
                                 CustomRepeatableEntry::make('items')
+                                    ->hiddenLabel()
                                     ->state($this->getItemsProperty())
                                     ->contained(false)
                                     ->schema(fn (CustomRepeatableEntry $component) => [
@@ -596,6 +598,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
             return;
         }
 
+        Log::info("Media Browser - Selecting File ID: {$id}");
         $this->selectedFileId = $id;
 
         if ($this->isPicker && ! $this->multiple) {
@@ -621,9 +624,11 @@ class MediaBrowser extends Component implements HasActions, HasForms
             }
         }
 
-        if (in_array($id, $this->selectedItems)) {
-            $this->selectedItems = array_values(array_diff($this->selectedItems, [$id]));
+        if (collect($this->selectedItems)->contains($id)) {
+            Log::info("Media Browser - Deselecting Item: {$id}");
+            $this->selectedItems = collect($this->selectedItems)->reject(fn ($item) => $item === $id)->toArray();
         } else {
+            Log::info("Media Browser - Selecting Item: {$id}");
             if ($this->isPicker && ! $this->multiple) {
                 $this->selectedItems = [$id];
             } else {
@@ -1045,13 +1050,10 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ->since()
                 ->color('gray'),
 
-            Select::make('activeTags')
+            TagsInput::make('activeTags')
                 ->label('Tags')
-                ->multiple()
-                ->options(Tag::pluck('name', 'id'))
-                ->createOptionUsing(fn (string $data) => Tag::create(['name' => $data])->id)
+                ->suggestions(Tag::pluck('name')->toArray())
                 ->live()
-                ->searchable()
                 ->visible(fn () => $this->isEditingTags)
                 ->hintAction(
                     Action::make('saveTags')
@@ -1071,7 +1073,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                         ->action(function () use ($file) {
                             $this->selectedFileId = $file->id;
                             $this->editingFolderId = null;
-                            $this->activeTags = $file->tags->pluck('id')->toArray();
+                            $this->activeTags = $file->tags->pluck('name')->toArray();
                             $this->isEditingTags = true;
                             $this->clearCachedSchemas();
                         })
@@ -1127,6 +1129,18 @@ class MediaBrowser extends Component implements HasActions, HasForms
                     ->badge(),
             ]),
 
+            TagsInput::make('activeTags')
+                ->label('Tags')
+                ->suggestions(Tag::pluck('name')->toArray())
+                ->live()
+                ->visible(fn () => $this->isEditingTags)
+                ->hintAction(
+                    Action::make('saveFolderTags')
+                        ->icon('heroicon-m-check')
+                        ->color('success')
+                        ->action(fn () => $this->saveTags())
+                ),
+
             TextEntry::make('folder_tags_display')
                 ->label('Tags')
                 ->state($folder->tags->pluck('name') ?: 'No tags')
@@ -1138,7 +1152,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                         ->action(function () use ($folder) {
                             $this->editingFolderId = $folder->id;
                             $this->selectedFileId = null;
-                            $this->activeTags = $folder->tags->pluck('id')->toArray();
+                            $this->activeTags = $folder->tags->pluck('name')->toArray();
                             $this->isEditingTags = true;
                             $this->clearCachedSchemas();
                         })
@@ -1242,6 +1256,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
     public function setCurrentFolder(?int $id): void
     {
+        Log::info("Media Browser - Setting Current Folder to ID: {$id}");
         $this->currentFolderId = $id;
         $this->currentFolder = $id ? Folder::query()->with(['tags'])->withCount(['children', 'files'])->find($id) : null;
         $this->editingFolderId = null;
@@ -1268,7 +1283,11 @@ class MediaBrowser extends Component implements HasActions, HasForms
         }
 
         if ($model) {
-            $model->tags()->sync($this->activeTags);
+            $tagIds = collect($this->activeTags)->map(function ($name) {
+                return Tag::firstOrCreate(['name' => $name])->id;
+            })->toArray();
+
+            $model->tags()->sync($tagIds);
         }
 
         $this->isEditingTags = false;
@@ -1378,6 +1397,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
             })->visible(fn () => $this->currentFolderId !== null);
     }
 
+
     public function uploadAction(): Action
     {
         return Action::make('upload')
@@ -1389,15 +1409,8 @@ class MediaBrowser extends Component implements HasActions, HasForms
                     ->multiple()
                     ->disk(fn () => filament('media-manager')->getDisk())
                     ->required(),
-                Select::make('tags')
-                    ->multiple()
-                    ->options(Tag::pluck('name', 'id'))
-                    ->createOptionUsing(function (string $data) {
-                        $tag = Tag::create(['name' => $data]);
-
-                        return $tag->id;
-                    })
-                    ->searchable(),
+                TagsInput::make('tags')
+                    ->suggestions(Tag::pluck('name')->toArray()),
                 TextInput::make('caption'),
                 TextInput::make('alt_text'),
             ])
@@ -1419,7 +1432,11 @@ class MediaBrowser extends Component implements HasActions, HasForms
                     ]);
 
                     if (isset($data['tags'])) {
-                        $fileModel->tags()->sync($data['tags']);
+                        $tagIds = collect($data['tags'])->map(function ($name) {
+                            return Tag::firstOrCreate(['name' => $name])->id;
+                        })->toArray();
+
+                        $fileModel->tags()->sync($tagIds);
                     }
 
                     try {
