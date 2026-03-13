@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Carbon;
 use Slimani\MediaManager\Database\Factories\FileFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -24,8 +25,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string $mime_type
  * @property int|null $width
  * @property int|null $height
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class File extends Model implements HasMedia
 {
