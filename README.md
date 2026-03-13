@@ -102,6 +102,8 @@ Please review [our security policy](SECURITY.md) on how to report security vulne
 ## Credits
 
 - [Moh](https://github.com/moh)
+- [CodeWithDennis - Select Tree](https://filamentphp.com/plugins/codewithdennis-select-tree)
+- [HugoMyb - Media Action](https://filamentphp.com/plugins/hugomyb-media-action)
 - [All Contributors](../../contributors)
 
 ## License
