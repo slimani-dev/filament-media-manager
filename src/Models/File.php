@@ -2,9 +2,12 @@
 
 namespace Slimani\MediaManager\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Slimani\MediaManager\Database\Factories\FileFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -14,9 +17,9 @@ class File extends Model implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
 
-    protected static function newFactory(): \Slimani\MediaManager\Database\Factories\FileFactory
+    protected static function newFactory(): FileFactory
     {
-        return \Slimani\MediaManager\Database\Factories\FileFactory::new();
+        return FileFactory::new();
     }
 
     protected $table = 'media_files';
@@ -34,7 +37,7 @@ class File extends Model implements HasMedia
         'height',
     ];
 
-    public function tags(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggable', 'media_taggables');
     }
@@ -66,7 +69,7 @@ class File extends Model implements HasMedia
 
     public function uploader(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'uploaded_by_user_id');
+        return $this->belongsTo(User::class, 'uploaded_by_user_id');
     }
 
     public function getUrl(string $conversion = ''): ?string

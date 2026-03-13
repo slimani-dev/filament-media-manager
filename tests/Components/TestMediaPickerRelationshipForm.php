@@ -5,6 +5,7 @@ namespace Slimani\MediaManager\Tests\Components;
 use App\Models\User;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Schema;
 use Livewire\Component;
 use Slimani\MediaManager\Form\MediaPicker;
 
@@ -22,7 +23,7 @@ class TestMediaPickerRelationshipForm extends Component implements HasForms
         $this->form->fill($user->attributesToArray());
     }
 
-    public function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->model($this->user)

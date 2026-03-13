@@ -2,6 +2,8 @@
 
 namespace Slimani\MediaManager\Tests;
 
+use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Slimani\MediaManager\Livewire\MediaBrowser;
@@ -65,7 +67,7 @@ class MediaBrowserTest extends TestCase
         $disk = filament('media-manager')->getDisk();
         Storage::fake($disk);
 
-        $file = \Illuminate\Http\UploadedFile::fake()->image('test-image.jpg');
+        $file = UploadedFile::fake()->image('test-image.jpg');
 
         Livewire::test(MediaBrowser::class)
             ->callAction('upload', [
@@ -79,14 +81,14 @@ class MediaBrowserTest extends TestCase
             'caption' => 'Test Caption',
         ]);
 
-        $file = \Slimani\MediaManager\Models\File::where('caption', 'Test Caption')->first();
+        $file = File::where('caption', 'Test Caption')->first();
         $this->assertNotNull($file, 'File record not found in database.');
         $this->assertNotEmpty($file->name, 'File name is empty.');
     }
 
     public function test_it_can_select_file_in_picker_mode()
     {
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
         $file = File::create(['name' => 'Test File', 'uploaded_by_user_id' => $user->id]);
         $media = $file->addMediaFromString('test content')
             ->usingFileName('test.txt')
@@ -102,7 +104,7 @@ class MediaBrowserTest extends TestCase
 
     public function test_it_can_select_multiple_files_in_picker_mode()
     {
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
         $file1 = File::create(['name' => 'File 1', 'uploaded_by_user_id' => $user->id]);
         $media1 = $file1->addMediaFromString('test 1')->usingFileName('test1.txt')->toMediaCollection('default');
 
@@ -256,7 +258,7 @@ class MediaBrowserTest extends TestCase
 
     public function test_it_prevents_selecting_non_accepted_files_in_picker_mode()
     {
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
         $pdfFile = File::create(['name' => 'PDF File', 'uploaded_by_user_id' => $user->id, 'mime_type' => 'application/pdf']);
         $jpgFile = File::create(['name' => 'JPG File', 'uploaded_by_user_id' => $user->id, 'mime_type' => 'image/jpeg']);
 

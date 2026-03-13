@@ -1,6 +1,10 @@
 <?php
 
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Blade;
+use Livewire\Component;
 use Slimani\MediaManager\Infolists\Components\MediaImageEntry;
 use Slimani\MediaManager\Models\File;
 use Slimani\MediaManager\Tests\TestCase;
@@ -15,12 +19,12 @@ it('can render an image file', function () {
         'extension' => 'jpg',
     ]);
 
-    $dummyLivewire = new class extends \Livewire\Component implements \Filament\Schemas\Contracts\HasSchemas
+    $dummyLivewire = new class extends Component implements HasSchemas
     {
-        use \Filament\Schemas\Concerns\InteractsWithSchemas;
+        use InteractsWithSchemas;
     };
     $component = MediaImageEntry::make('file')
-        ->container(\Filament\Schemas\Schema::make($dummyLivewire)->record($file))
+        ->container(Schema::make($dummyLivewire)->record($file))
         ->state($file->id)
         ->circular();
 
@@ -40,12 +44,12 @@ it('can render a non-image file thumbnail', function () {
         'extension' => 'pdf',
     ]);
 
-    $dummyLivewire = new class extends \Livewire\Component implements \Filament\Schemas\Contracts\HasSchemas
+    $dummyLivewire = new class extends Component implements HasSchemas
     {
-        use \Filament\Schemas\Concerns\InteractsWithSchemas;
+        use InteractsWithSchemas;
     };
     $component = MediaImageEntry::make('file')
-        ->container(\Filament\Schemas\Schema::make($dummyLivewire)->record($file))
+        ->container(Schema::make($dummyLivewire)->record($file))
         ->state($file->id);
 
     $html = Blade::render($component->toHtml());
@@ -74,12 +78,12 @@ it('can render multiple files', function () {
         'extension' => 'pdf',
     ]);
 
-    $dummyLivewire = new class extends \Livewire\Component implements \Filament\Schemas\Contracts\HasSchemas
+    $dummyLivewire = new class extends Component implements HasSchemas
     {
-        use \Filament\Schemas\Concerns\InteractsWithSchemas;
+        use InteractsWithSchemas;
     };
     $component = MediaImageEntry::make('files')
-        ->container(\Filament\Schemas\Schema::make($dummyLivewire)->record($file1))
+        ->container(Schema::make($dummyLivewire)->record($file1))
         ->state([$file1->id, $file2->id]);
 
     $html = Blade::render($component->toHtml());
@@ -100,12 +104,12 @@ it('can handle File model in state', function () {
         'extension' => 'jpg',
     ]);
 
-    $dummyLivewire = new class extends \Livewire\Component implements \Filament\Schemas\Contracts\HasSchemas
+    $dummyLivewire = new class extends Component implements HasSchemas
     {
-        use \Filament\Schemas\Concerns\InteractsWithSchemas;
+        use InteractsWithSchemas;
     };
     $component = MediaImageEntry::make('file')
-        ->container(\Filament\Schemas\Schema::make($dummyLivewire)->record($file))
+        ->container(Schema::make($dummyLivewire)->record($file))
         ->state($file);
 
     $html = Blade::render($component->toHtml());
@@ -131,12 +135,12 @@ it('can handle Collection of File models in state', function () {
         'extension' => 'jpg',
     ]);
 
-    $dummyLivewire = new class extends \Livewire\Component implements \Filament\Schemas\Contracts\HasSchemas
+    $dummyLivewire = new class extends Component implements HasSchemas
     {
-        use \Filament\Schemas\Concerns\InteractsWithSchemas;
+        use InteractsWithSchemas;
     };
     $component = MediaImageEntry::make('files')
-        ->container(\Filament\Schemas\Schema::make($dummyLivewire)->record($file1))
+        ->container(Schema::make($dummyLivewire)->record($file1))
         ->state(collect([$file1, $file2]));
 
     $html = Blade::render($component->toHtml());

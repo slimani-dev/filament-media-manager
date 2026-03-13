@@ -4,6 +4,7 @@ namespace Slimani\MediaManager\Infolists\Components;
 
 use Filament\Infolists\Components\ImageEntry;
 use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Support\Collection;
 use Slimani\MediaManager\Models\File;
 
 class MediaImageEntry extends ImageEntry
@@ -21,7 +22,7 @@ class MediaImageEntry extends ImageEntry
         );
     }
 
-    public function getFileRecords(): \Illuminate\Support\Collection
+    public function getFileRecords(): Collection
     {
         $state = $this->getState();
 
@@ -30,7 +31,7 @@ class MediaImageEntry extends ImageEntry
         }
 
         // If it's already a collection or array of models
-        if ($state instanceof \Illuminate\Support\Collection) {
+        if ($state instanceof Collection) {
             return $state->filter(fn ($item) => $item instanceof File);
         }
 

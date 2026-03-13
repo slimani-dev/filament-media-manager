@@ -3,10 +3,24 @@
 namespace Slimani\MediaManager\Form;
 
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
+use Filament\Schemas\Components\Livewire;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Laravel\SerializableClosure\SerializableClosure;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Slimani\MediaManager\Livewire\MediaBrowser;
 use Slimani\MediaManager\Models\File;
 
-class MediaPicker extends \Filament\Forms\Components\FileUpload
+class MediaPicker extends FileUpload
 {
     protected string $pickerId;
 
@@ -38,7 +52,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
         return $this->evaluate($this->collection);
     }
 
-    public function getRelationship(): ?\Illuminate\Database\Eloquent\Relations\Relation
+    public function getRelationship(): ?Relation
     {
         $name = $this->evaluate($this->relationship) ?: $this->getName();
 
@@ -58,7 +72,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
 
         $relationship = $record->{$name}();
 
-        if (! $relationship instanceof \Illuminate\Database\Eloquent\Relations\Relation) {
+        if (! $relationship instanceof Relation) {
             return null;
         }
 
@@ -69,7 +83,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
     {
         info('getIdentifiersFromState: '.json_encode($state));
 
-        return array_map('strval', array_filter(\Illuminate\Support\Arr::wrap($state)));
+        return array_map('strval', array_filter(Arr::wrap($state)));
     }
 
     protected function setUp(): void
@@ -95,7 +109,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
                     $statePath = "mountedActions.{$actionIndex}.data.selected_ids";
 
                     return [
-                        \Filament\Schemas\Components\Livewire::make(\Slimani\MediaManager\Livewire\MediaBrowser::class, [
+                        Livewire::make(MediaBrowser::class, [
                             'isPicker' => true,
                             'multiple' => $component->isMultiple(),
                             'selectedItems' => collect((array) ($component->getState() ?? []))
@@ -104,10 +118,10 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
                             'pickerId' => $pickerId,
                             'statePath' => $statePath,
                             'acceptedFileTypes' => $component->getAcceptedFileTypes(),
-                            'onSelect' => serialize(new \Laravel\SerializableClosure\SerializableClosure(function (\Illuminate\Support\Collection $files, \Slimani\MediaManager\Livewire\MediaBrowser $browser) use ($statePath) {
+                            'onSelect' => serialize(new SerializableClosure(function (Collection $files, MediaBrowser $browser) use ($statePath) {
                                 $ids = $files->pluck('id')->implode(',');
 
-                                \Illuminate\Support\Facades\Log::info('MediaPicker onSelect called', [
+                                Log::info('MediaPicker onSelect called', [
                                     'count' => $files->count(),
                                     'files' => $files->pluck('name', 'id')->toArray(),
                                     'ids' => $ids,
@@ -122,7 +136,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
                                 );
                             })),
                         ]),
-                        \Filament\Forms\Components\Hidden::make('selected_ids')
+                        Hidden::make('selected_ids')
                             ->extraAttributes([
                                 'x-on:sync-picker-ids.window' => "\$wire.set('{$statePath}', \$event.detail.ids)",
                             ]),
@@ -132,9 +146,9 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
                 ->modalWidth('6xl')
                 ->action(function (MediaPicker $component, array $data) {
                     $identifiers = array_filter(explode(',', $data['selected_ids'] ?? ''));
-                    $files = \Slimani\MediaManager\Models\File::whereIn('id', $identifiers)->get();
+                    $files = File::whereIn('id', $identifiers)->get();
 
-                    \Illuminate\Support\Facades\Log::info('MediaPicker action executed', [
+                    Log::info('MediaPicker action executed', [
                         'count' => $files->count(),
                         'files' => $files->pluck('name', 'id')->toArray(),
                     ]);
@@ -172,7 +186,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
             ];
         });
 
-        $this->saveUploadedFileUsing(static function (MediaPicker $component, \Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file): ?string {
+        $this->saveUploadedFileUsing(static function (MediaPicker $component, TemporaryUploadedFile $file): ?string {
             $fileModel = File::create([
                 'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
                 'uploaded_by_user_id' => auth()->id(),
@@ -203,9 +217,9 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
                 if ($record) {
                     $relationship = $component->getRelationship();
                     if ($relationship) {
-                        if ($relationship instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo) {
+                        if ($relationship instanceof BelongsTo) {
                             $state = $record->getAttribute($relationship->getForeignKeyName());
-                        } elseif ($relationship instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany or $relationship instanceof \Illuminate\Database\Eloquent\Relations\MorphToMany) {
+                        } elseif ($relationship instanceof BelongsToMany or $relationship instanceof MorphToMany) {
                             $state = $relationship->get();
                         }
                     } else {
@@ -220,7 +234,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
                 return;
             }
 
-            if ($state instanceof \Illuminate\Database\Eloquent\Model) {
+            if ($state instanceof Model) {
                 $component->state($component->isMultiple() ? [(string) $state->id] : (string) $state->id);
 
                 return;
@@ -254,7 +268,7 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
             $relationship = $component->getRelationship();
             $identifiers = $component->getIdentifiersFromState($state);
 
-            if ($relationship instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo) {
+            if ($relationship instanceof BelongsTo) {
                 $record = $component->getRecord();
                 $column = $relationship->getForeignKeyName();
                 $id = $identifiers[0] ?? null;
@@ -267,8 +281,8 @@ class MediaPicker extends \Filament\Forms\Components\FileUpload
                 return;
             }
 
-            if ($relationship instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany ||
-                $relationship instanceof \Illuminate\Database\Eloquent\Relations\MorphToMany) {
+            if ($relationship instanceof BelongsToMany ||
+                $relationship instanceof MorphToMany) {
 
                 $pivotData = [];
                 $collection = $component->getCollection() ?: $component->getName();

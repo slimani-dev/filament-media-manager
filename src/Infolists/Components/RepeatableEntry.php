@@ -5,6 +5,7 @@ namespace Slimani\MediaManager\Infolists\Components;
 use Closure;
 use Filament\Infolists\Components\RepeatableEntry as BaseRepeatableEntry;
 use Filament\Schemas\Schema;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 
@@ -88,7 +89,7 @@ class RepeatableEntry extends BaseRepeatableEntry
                         ? '{
                             content: '.Js::from($tooltip).',
                             theme: $store.theme,
-                            allowHTML: '.Js::from($tooltip instanceof \Illuminate\Contracts\Support\Htmlable).',
+                            allowHTML: '.Js::from($tooltip instanceof Htmlable).',
                         }'
                         : null,
                 ], escape: false);

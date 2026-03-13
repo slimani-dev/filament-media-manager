@@ -5,6 +5,8 @@ namespace Slimani\MediaManager\Livewire;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -12,9 +14,11 @@ use Filament\Infolists\Components\Entry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\EmptyState;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -22,6 +26,10 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Hugomyb\FilamentMediaAction\Actions\MediaAction;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +46,7 @@ use Slimani\MediaManager\Models\Folder;
 use Slimani\MediaManager\Models\Tag;
 
 /**
- * @property-read \Illuminate\Support\Collection $items
+ * @property-read Collection $items
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Tag> $tags
  *
  *
@@ -126,13 +134,13 @@ class MediaBrowser extends Component implements HasActions, HasForms
             'currentFolderId' => ['as' => 'folder', 'history' => true],
             'perPage' => ['history' => true],
             'showSelectedOnly' => ['history' => true],
-            'paginators.' . $this->getPageName() => ['as' => $this->getPageName(), 'history' => true],
+            'paginators.'.$this->getPageName() => ['as' => $this->getPageName(), 'history' => true],
         ];
     }
 
     public ?string $statePath = null;
 
-    public ?\Illuminate\Support\Collection $files = null;
+    public ?Collection $files = null;
 
     public ?array $acceptedFileTypes = [];
 
@@ -300,15 +308,15 @@ class MediaBrowser extends Component implements HasActions, HasForms
             ->schema([
                 Grid::make(['default' => 1, 'lg' => 4])
                     ->schema([
-                        \Filament\Schemas\Components\Flex::make(fn () => [
-                            \Filament\Schemas\Components\Flex::make([
+                        Flex::make(fn () => [
+                            Flex::make([
                                 $this->createFolderAction(),
                                 $this->uploadAction(),
                             ])->extraAttributes([
                                 'class' => 'gap-2',
                             ])->visible(fn () => count($this->selectedItems) == 0),
 
-                            \Filament\Schemas\Components\Flex::make([
+                            Flex::make([
                                 $this->bulkMoveAction(),
                                 $this->bulkDeleteAction(),
                                 Action::make('clearSelection')
@@ -322,7 +330,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                             ])->from('xs')
                                 ->visible(fn () => count($this->selectedItems) > 0),
 
-                            \Filament\Schemas\Components\Flex::make([
+                            Flex::make([
                                 TextInput::make('search')
                                     ->live()
                                     ->debounce()
@@ -330,8 +338,8 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                     ->placeholder('Search files...')
                                     ->prefixIcon('heroicon-m-magnifying-glass')
                                     ->columnSpan(1),
-                                \Filament\Schemas\Components\Flex::make([
-                                    \Filament\Forms\Components\Select::make('sortField')
+                                Flex::make([
+                                    Select::make('sortField')
                                         ->hiddenLabel()
                                         ->options([
                                             'name' => 'Name',
@@ -359,10 +367,10 @@ class MediaBrowser extends Component implements HasActions, HasForms
                         ])->columnSpanFull()
                             ->from('md'),
 
-                        \Filament\Schemas\Components\Section::make()
+                        Section::make()
                             ->schema([
-                                \Filament\Schemas\Components\Grid::make(['default' => 1, 'md' => 4])->schema([
-                                    \Filament\Forms\Components\Select::make('filterType')
+                                Grid::make(['default' => 1, 'md' => 4])->schema([
+                                    Select::make('filterType')
                                         ->label('File Type')
                                         ->options([
                                             'image' => 'Images',
@@ -374,20 +382,20 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                         ->placeholder('All Types')
                                         ->live()
                                         ->columnSpan(1),
-                                    \Filament\Forms\Components\Select::make('filterTags')
+                                    Select::make('filterTags')
                                         ->label('Tags')
                                         ->multiple()
-                                        ->options(\Slimani\MediaManager\Models\Tag::pluck('name', 'id'))
+                                        ->options(Tag::pluck('name', 'id'))
                                         ->live()
                                         ->searchable()
                                         ->columnSpan(1),
-                                    \Filament\Forms\Components\TextInput::make('filterSizeMin')
+                                    TextInput::make('filterSizeMin')
                                         ->label('Min Size (MB)')
                                         ->numeric()
                                         ->live()
                                         ->debounce()
                                         ->columnSpan(1),
-                                    \Filament\Forms\Components\TextInput::make('filterSizeMax')
+                                    TextInput::make('filterSizeMax')
                                         ->label('Max Size (MB)')
                                         ->numeric()
                                         ->live()
@@ -431,7 +439,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                     ->schema(fn (CustomRepeatableEntry $component) => [
                                         MediaItem::make($item = $component->getItem())
                                             ->isPicker($this->isPicker)
-                                            ->isAccepted($this->isPicker && $item instanceof \Slimani\MediaManager\Models\File ? $this->isAccepted($item) : true),
+                                            ->isAccepted($this->isPicker && $item instanceof File ? $this->isAccepted($item) : true),
                                     ])
                                     ->extraAttributes([
                                         'class' => 'fi-media-grid',
@@ -875,13 +883,13 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $perPage = $this->perPage;
 
         if ($perPage === 'all') {
-            return new \Illuminate\Pagination\LengthAwarePaginator(
+            return new LengthAwarePaginator(
                 $allItems,
                 $allItems->count(),
                 $allItems->count() ?: 1,
                 1,
                 [
-                    'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+                    'path' => Paginator::resolveCurrentPath(),
                     'pageName' => $this->getPageName(),
                 ]
             );
@@ -889,13 +897,13 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
         $items = $allItems->forPage($page, $perPage);
 
-        return new \Illuminate\Pagination\LengthAwarePaginator(
+        return new LengthAwarePaginator(
             $items,
             $allItems->count(),
             $perPage,
             $page,
             [
-                'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+                'path' => Paginator::resolveCurrentPath(),
                 'pageName' => $this->getPageName(),
             ]
         );
@@ -1028,7 +1036,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ->since()
                 ->color('gray'),
 
-            \Filament\Forms\Components\Select::make('activeTags')
+            Select::make('activeTags')
                 ->label('Tags')
                 ->multiple()
                 ->options(Tag::pluck('name', 'id'))
@@ -1295,7 +1303,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
             ->icon(Heroicon::FolderArrowDown)
             ->color('gray')
             ->form([
-                \Filament\Forms\Components\Select::make('folder_id')
+                Select::make('folder_id')
                     ->label('Target Folder')
                     ->options(function () {
                         $folders = Folder::all();
@@ -1369,12 +1377,12 @@ class MediaBrowser extends Component implements HasActions, HasForms
             ->label('Upload')
             ->icon('heroicon-m-arrow-up-tray')
             ->schema([
-                \Filament\Forms\Components\FileUpload::make('files')
+                FileUpload::make('files')
                     ->label('Files')
                     ->multiple()
                     ->disk(fn () => filament('media-manager')->getDisk())
                     ->required(),
-                \Filament\Forms\Components\Select::make('tags')
+                Select::make('tags')
                     ->multiple()
                     ->options(Tag::pluck('name', 'id'))
                     ->createOptionUsing(function (string $data) {
@@ -1383,13 +1391,13 @@ class MediaBrowser extends Component implements HasActions, HasForms
                         return $tag->id;
                     })
                     ->searchable(),
-                \Filament\Forms\Components\TextInput::make('caption'),
-                \Filament\Forms\Components\TextInput::make('alt_text'),
+                TextInput::make('caption'),
+                TextInput::make('alt_text'),
             ])
             ->action(function (array $data) {
                 foreach ($data['files'] as $file) {
 
-                    $filename = $file instanceof \Illuminate\Http\UploadedFile
+                    $filename = $file instanceof UploadedFile
                         ? $file->getClientOriginalName()
                         : basename($file);
 
@@ -1410,7 +1418,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                     try {
                         $diskName = filament('media-manager')->getDisk();
 
-                        if ($file instanceof \Illuminate\Http\UploadedFile) {
+                        if ($file instanceof UploadedFile) {
                             $media = $fileModel->addMediaFromString($file->get())
                                 ->usingFileName($filename)
                                 ->toMediaCollection('default', $diskName);
@@ -1467,7 +1475,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                         ]);
                     } catch (\Throwable $e) {
                         // Log error or handle gracefully
-                        \Illuminate\Support\Facades\Log::error('Media Manager Upload Error: '.$e->getMessage());
+                        Log::error('Media Manager Upload Error: '.$e->getMessage());
 
                         // We still have the record but media was not attached.
                         // We might want to delete the record if media fails
@@ -1499,7 +1507,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         }
 
         if (empty($fileIds)) {
-            \Filament\Notifications\Notification::make()
+            Notification::make()
                 ->title('Please select at least one file')
                 ->warning()
                 ->send();
@@ -1544,7 +1552,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $this->clearCachedSchemas();
         $this->dispatch('media-updated');
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('Items deleted successfully')
             ->success()
             ->send();
@@ -1599,7 +1607,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $this->clearCachedSchemas();
         $this->dispatch('media-updated');
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('Items moved successfully')
             ->success()
             ->send();

@@ -5,6 +5,7 @@ namespace Slimani\MediaManager;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
+use Slimani\MediaManager\Livewire\MediaBrowser;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -36,7 +37,7 @@ class MediaManagerServiceProvider extends PackageServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        Livewire::component('media-browser', \Slimani\MediaManager\Livewire\MediaBrowser::class);
+        Livewire::component('media-browser', MediaBrowser::class);
 
         FilamentAsset::register([
             Css::make('media-manager-styles', __DIR__.'/../resources/css/media-manager.css')->loadedOnRequest(),

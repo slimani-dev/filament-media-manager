@@ -5,6 +5,8 @@ namespace Slimani\MediaManager\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\DB;
 
 class Folder extends Model
 {
@@ -15,7 +17,7 @@ class Folder extends Model
         'parent_id',
     ];
 
-    public function tags(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggable', 'media_taggables');
     }
@@ -51,7 +53,7 @@ class Folder extends Model
             SELECT id FROM FolderHierarchy WHERE id != ?
         ';
 
-        $results = \Illuminate\Support\Facades\DB::select($query, [$this->id, $this->id]);
+        $results = DB::select($query, [$this->id, $this->id]);
 
         return array_column($results, 'id');
     }
@@ -76,7 +78,7 @@ class Folder extends Model
             LEFT JOIN media_files ON media_files.folder_id = FolderHierarchy.id
         ';
 
-        $result = \Illuminate\Support\Facades\DB::selectOne($query, [$this->id, $this->id]);
+        $result = DB::selectOne($query, [$this->id, $this->id]);
 
         return [
             'files_count' => (int) ($result->files_count ?? 0),

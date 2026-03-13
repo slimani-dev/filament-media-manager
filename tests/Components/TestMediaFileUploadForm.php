@@ -4,7 +4,9 @@ namespace Slimani\MediaManager\Tests\Components;
 
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Schema;
 use Livewire\Component;
+use Slimani\MediaManager\Form\MediaPicker;
 
 class TestMediaFileUploadForm extends Component implements HasForms
 {
@@ -17,11 +19,11 @@ class TestMediaFileUploadForm extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                \Slimani\MediaManager\Form\MediaPicker::make('avatar_id'),
+                MediaPicker::make('avatar_id'),
             ])
             ->statePath('data');
     }
