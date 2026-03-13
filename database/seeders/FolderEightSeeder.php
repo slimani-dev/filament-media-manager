@@ -4,7 +4,6 @@ namespace Slimani\MediaManager\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File as FileFacade;
-use Illuminate\Support\Facades\Storage;
 use Slimani\MediaManager\Models\File as MediaFile;
 use Slimani\MediaManager\Models\Folder;
 
@@ -28,13 +27,13 @@ class FolderEightSeeder extends Seeder
 
         $assetPath = storage_path('app/seed-assets');
         $existingAssets = FileFacade::exists($assetPath) ? FileFacade::files($assetPath) : [];
-        
+
         $maxSize = 10 * 1024 * 1024; // 10MB limit
-        $filteredAssets = collect($existingAssets)->filter(fn($f) => $f->getSize() < $maxSize);
-        
-        $images = $filteredAssets->filter(fn($f) => in_array($f->getExtension(), ['jpg', 'jpeg', 'png', 'svg']));
-        $videos = $filteredAssets->filter(fn($f) => in_array($f->getExtension(), ['mp4', 'webm', 'mov']));
-        $pdfs = $filteredAssets->filter(fn($f) => $f->getExtension() === 'pdf');
+        $filteredAssets = collect($existingAssets)->filter(fn ($f) => $f->getSize() < $maxSize);
+
+        $images = $filteredAssets->filter(fn ($f) => in_array($f->getExtension(), ['jpg', 'jpeg', 'png', 'svg']));
+        $videos = $filteredAssets->filter(fn ($f) => in_array($f->getExtension(), ['mp4', 'webm', 'mov']));
+        $pdfs = $filteredAssets->filter(fn ($f) => $f->getExtension() === 'pdf');
 
         $this->command->info("Starting to seed 60 files into folder {$folderId}...");
 
@@ -48,16 +47,16 @@ class FolderEightSeeder extends Seeder
                 5 => 'txt',
             };
 
-            $filename = "";
+            $filename = '';
             $tempPath = null;
 
             if ($type === 'image' && $images->isNotEmpty()) {
                 $source = $images->random();
-                $filename = "image_{$i}." . $source->getExtension();
+                $filename = "image_{$i}.".$source->getExtension();
                 $tempPath = $source->getPathname();
             } elseif ($type === 'video' && $videos->isNotEmpty()) {
                 $source = $videos->random();
-                $filename = "video_{$i}." . $source->getExtension();
+                $filename = "video_{$i}.".$source->getExtension();
                 $tempPath = $source->getPathname();
             } elseif ($type === 'pdf' && $pdfs->isNotEmpty()) {
                 $source = $pdfs->random();

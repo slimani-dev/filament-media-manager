@@ -1385,7 +1385,6 @@ class MediaBrowser extends Component implements HasActions, HasForms
             })->visible(fn () => $this->currentFolderId !== null);
     }
 
-
     public function uploadAction(): Action
     {
         return Action::make('upload')
