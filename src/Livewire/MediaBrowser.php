@@ -234,7 +234,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $this->pickerId = $pickerId;
 
         if (count($this->selectedItems) === 1) {
-            $this->locateItem($this->selectedItems[0]);
+            $this->locateItem(reset($this->selectedItems));
         } else {
             $this->resetPage($this->getPageName());
         }
@@ -536,7 +536,12 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                             ];
                                         }
 
-                                        $itemKey = $this->selectedItems[0];
+                                        $itemKey = reset($this->selectedItems);
+
+                                        if (! $itemKey) {
+                                            return [];
+                                        }
+
                                         if (! str_contains($itemKey, '-')) {
                                             $itemKey = "file-{$itemKey}";
                                         }
@@ -584,6 +589,12 @@ class MediaBrowser extends Component implements HasActions, HasForms
     {
         $file = File::find($id);
         if ($file) {
+            $idToRemove = "file-{$id}";
+            $this->selectedItems = collect($this->selectedItems)
+                ->reject(fn ($item) => $item === $idToRemove)
+                ->values()
+                ->toArray();
+
             $file->delete();
             $this->selectedFileId = null;
             $this->dispatch('media-deleted');
@@ -905,8 +916,10 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ]
             );
         }
-
-        $items = $allItems->forPage($page, $perPage);
+        $items = $allItems->forPage($page, $perPage)
+            ->mapWithKeys(fn ($item) => [
+                ($item instanceof Folder ? 'folder-' : 'file-').$item->id => $item,
+            ]);
 
         return new LengthAwarePaginator(
             $items,
@@ -926,7 +939,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
             return null;
         }
 
-        [$type, $id] = explode('-', $this->selectedItems[0]);
+        [$type, $id] = explode('-', reset($this->selectedItems));
 
         if ($type !== 'file') {
             return null;
@@ -1258,7 +1271,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $model = null;
 
         if (count($this->selectedItems) === 1) {
-            [$type, $id] = explode('-', $this->selectedItems[0]);
+            [$type, $id] = explode('-', reset($this->selectedItems));
             if ($type === 'file') {
                 $model = File::find($id);
             } else {

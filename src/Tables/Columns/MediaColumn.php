@@ -16,9 +16,12 @@ class MediaColumn extends Column
             return null;
         }
 
-        // Assuming state is ID or ID array. simpler for single ID now.
-        $file = File::find($state);
+        $file = $state instanceof File ? $state : File::find($state);
 
-        return $file?->getFirstMediaUrl('default', 'thumb');
+        if ($file instanceof \Illuminate\Support\Collection) {
+            $file = $file->first();
+        }
+
+        return $file instanceof File ? $file->getUrl('thumb') : null;
     }
 }

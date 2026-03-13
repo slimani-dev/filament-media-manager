@@ -168,15 +168,7 @@ class MediaPicker extends FileUpload
 
             $media = $fileRecord->getFirstMedia('default');
 
-            $url = null;
-            if ($component->getVisibility() === 'private' && $media) {
-                try {
-                    $url = $media->getTemporaryUrl(now()->addMinutes(30)->endOfHour());
-                } catch (\Throwable $e) {
-                }
-            }
-
-            $url ??= $media?->getUrl() ?? null;
+            $url = $fileRecord->getUrl();
 
             return [
                 'name' => $media?->name ?? $media?->file_name ?? $fileRecord->name,

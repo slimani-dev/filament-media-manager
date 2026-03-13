@@ -122,7 +122,7 @@ class RepeatableEntry extends BaseRepeatableEntry
                 $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
                 $action = $this->getAction();
                 ?>
-                <li class="fi-in-repeatable-item">
+                <li class="fi-in-repeatable-item" wire:key="<?= $this->getLivewire()->getId() ?>.items.<?= $itemKey ?>">
                     <?php if ($url) { ?>
                         <a 
                             <?= \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() ?> 

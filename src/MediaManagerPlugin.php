@@ -12,7 +12,7 @@ class MediaManagerPlugin implements Plugin
 {
     use EvaluatesClosures;
 
-    protected string|Closure $disk = 'public';
+    protected string|Closure|null $disk = null;
 
     public function getId(): string
     {
@@ -45,6 +45,6 @@ class MediaManagerPlugin implements Plugin
 
     public function getDisk(): string
     {
-        return $this->evaluate($this->disk);
+        return $this->evaluate($this->disk) ?? config('media-library.disk_name', 'media');
     }
 }
