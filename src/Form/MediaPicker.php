@@ -28,6 +28,8 @@ class MediaPicker extends FileUpload
 
     protected string|\Closure|null $relationship = null;
 
+    protected string|\Closure|null $directory = null;
+
     public function getPickerId(): string
     {
         return $this->pickerId ?? $this->getStatePath();
@@ -50,6 +52,18 @@ class MediaPicker extends FileUpload
     public function getCollection(): ?string
     {
         return $this->evaluate($this->collection);
+    }
+
+    public function directory(string|\Closure|null $directory): static
+    {
+        $this->directory = $directory;
+
+        return $this;
+    }
+
+    public function getDirectory(): ?string
+    {
+        return $this->evaluate($this->directory);
     }
 
     public function getRelationship(): ?Relation
@@ -179,10 +193,27 @@ class MediaPicker extends FileUpload
         });
 
         $this->saveUploadedFileUsing(static function (MediaPicker $component, TemporaryUploadedFile $file): ?string {
+            $folderId = null;
+            $directory = $component->getDirectory();
+
+            if ($directory) {
+                $segments = explode('/', trim($directory, '/'));
+                $parentId = null;
+
+                foreach ($segments as $segment) {
+                    $folder = \Slimani\MediaManager\Models\Folder::firstOrCreate([
+                        'name' => $segment,
+                        'parent_id' => $parentId,
+                    ]);
+                    $parentId = $folder->id;
+                }
+                $folderId = $parentId;
+            }
+
             $fileModel = File::create([
                 'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
                 'uploaded_by_user_id' => auth()->id(),
-                'folder_id' => null, // Ensure direct uploads go to the root folder
+                'folder_id' => $folderId,
             ]);
 
             $media = $fileModel->addMediaFromString($file->get())
