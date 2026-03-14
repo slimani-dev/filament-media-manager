@@ -597,6 +597,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
             $file->delete();
             $this->selectedFileId = null;
+            $this->clearCachedSchemas();
             $this->dispatch('media-deleted');
         }
     }
@@ -905,8 +906,12 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $perPage = $this->perPage;
 
         if ($perPage === 'all') {
+            $items = $allItems->mapWithKeys(fn ($item) => [
+                ($item instanceof Folder ? 'folder-' : 'file-').$item->id => $item,
+            ]);
+
             return new LengthAwarePaginator(
-                $allItems,
+                $items,
                 $allItems->count(),
                 $allItems->count() ?: 1,
                 1,
