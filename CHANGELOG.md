@@ -2,6 +2,17 @@
 
 All notable changes to `filament-media-manager` will be documented in this file.
 
+## v0.6.0 - 2026-03-14
+
+### Added
+- Expanded plugin customization support for navigation (group, label, icon, sort, registration condition).
+- Support for custom header and footer widgets on the Media Manager page.
+- Support for custom header and footer views on the Media Manager page.
+
+### Changed
+- Refactored plugin customization pattern to follow Filament best practices and avoid early page instantiation issues.
+- Updated documentation to prioritize Tailwind CSS v4 and removed legacy v3 instructions.
+
 ## v0.2.5 - 2026-03-13
 
 ### Changed

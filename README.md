@@ -42,24 +42,10 @@ php artisan vendor:publish --tag="media-manager-config"
 
 If you are using a custom Filament theme, you should add the plugin's views to your Tailwind configuration.
 
-### Tailwind CSS v4
-
 Add the following `@source` directive to your `theme.css` file:
 
 ```css
 @source '../../../../vendor/slimani/filament-media-manager/resources/**/*';
-```
-
-### Tailwind CSS v3
-
-Add the following path to your `content` array in `tailwind.config.js`:
-
-```javascript
-export default {
-    content: [
-        './vendor/slimani/filament-media-manager/resources/**/*.blade.php',
-    ],
-}
 ```
 
 ## Usage
@@ -76,6 +62,29 @@ public function panel(Panel $panel): Panel
     return $panel
         ->plugin(MediaManagerPlugin::make());
 }
+```
+
+### Plugin Customization
+
+You can customize the Media Manager directly in your Panel Provider:
+
+```php
+use Slimani\MediaManager\MediaManagerPlugin;
+
+MediaManagerPlugin::make()
+    ->navigationGroup('System')
+    ->navigationLabel('Assets')
+    ->navigationIcon('heroicon-o-folder')
+    ->navigationSort(5)
+    ->shouldRegisterNavigation(fn () => auth()->user()->isAdmin())
+    ->headerWidgets([
+        MyCustomWidget::class,
+    ])
+    ->footerWidgets([
+        AnotherWidget::class,
+    ])
+    ->header(view('custom.header'))
+    ->footer(view('custom.footer'))
 ```
 
 ### Media Picker Field
@@ -104,6 +113,21 @@ MediaColumn::make('avatar')
     ->circular()
     ->stacked()
 ```
+
+### Media Image Entry
+
+If you're using an Infolist, you can use the `MediaImageEntry` to display media:
+
+```php
+use Slimani\MediaManager\Infolists\Components\MediaImageEntry;
+
+MediaImageEntry::make('avatar')
+    ->label('User Avatar')
+    ->circular() // Optional
+    ->width(100) // Optional
+```
+
+This component also supports a preview action that opens the file in a slide-over.
 
 ## Testing
 
