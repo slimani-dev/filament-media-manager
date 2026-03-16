@@ -2,27 +2,20 @@
 
 namespace Slimani\MediaManager\Tables\Columns;
 
-use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Collection;
 use Slimani\MediaManager\Models\File;
 
-class MediaColumn extends Column
+class MediaColumn extends ImageColumn
 {
-    protected string $view = 'media-manager::filament.tables.columns.media-column';
-
-    public function getMediaUrl(): ?string
+    public function getImageUrl(mixed $state = null): ?string
     {
-        $state = $this->getState();
-        if (! $state) {
-            return null;
+        $state ??= $this->getState();
+
+        if ($state instanceof Collection) {
+            $state = $state->first();
         }
 
-        $file = $state instanceof File ? $state : File::find($state);
-
-        if ($file instanceof Collection) {
-            $file = $file->first();
-        }
-
-        return $file instanceof File ? $file->getUrl('thumb') : null;
+        return ($state instanceof File) ? $state->getUrl('thumb') : null;
     }
 }

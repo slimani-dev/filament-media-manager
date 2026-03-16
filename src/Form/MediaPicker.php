@@ -96,8 +96,6 @@ class MediaPicker extends FileUpload
 
     protected function getIdentifiersFromState($state): array
     {
-        info('getIdentifiersFromState: '.json_encode($state));
-
         return array_map('strval', array_filter(Arr::wrap($state)));
     }
 
@@ -136,13 +134,6 @@ class MediaPicker extends FileUpload
                             'onSelect' => serialize(new SerializableClosure(function (Collection $files, MediaBrowser $browser) use ($statePath) {
                                 $ids = $files->pluck('id')->implode(',');
 
-                                Log::info('MediaPicker onSelect called', [
-                                    'count' => $files->count(),
-                                    'files' => $files->pluck('name', 'id')->toArray(),
-                                    'ids' => $ids,
-                                    'statePath' => $statePath,
-                                ]);
-
                                 $browser->files = $files;
 
                                 $browser->dispatch('sync-picker-ids',
@@ -162,11 +153,6 @@ class MediaPicker extends FileUpload
                 ->action(function (MediaPicker $component, array $data) {
                     $identifiers = array_filter(explode(',', $data['selected_ids'] ?? ''));
                     $files = File::whereIn('id', $identifiers)->get();
-
-                    Log::info('MediaPicker action executed', [
-                        'count' => $files->count(),
-                        'files' => $files->pluck('name', 'id')->toArray(),
-                    ]);
 
                     $component->state($identifiers);
                 })
@@ -235,7 +221,7 @@ class MediaPicker extends FileUpload
 
         // Map IDs/Relationships from model to Identifiers for the picker
         $this->afterStateHydrated(static function (MediaPicker $component, $state): void {
-            info('afterStateHydrated: '.json_encode($state));
+
             if (blank($state)) {
                 $record = $component->getRecord();
                 if ($record) {
@@ -277,7 +263,6 @@ class MediaPicker extends FileUpload
 
         // Map identifiers back to the database relationships
         $this->dehydrateStateUsing(static function (MediaPicker $component, $state) {
-            info('dehydrateStateUsing: '.json_encode($state));
             $identifiers = $component->getIdentifiersFromState($state);
 
             if ($component->isMultiple()) {

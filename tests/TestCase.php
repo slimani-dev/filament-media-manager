@@ -86,6 +86,28 @@ class TestCase extends Orchestra
             $table->string('collection')->nullable();
         });
 
+        Schema::create('media_folders', function ($table) {
+            $table->id();
+            $table->string('name');
+            $table->foreignId('parent_id')->nullable()->constrained('media_folders')->nullOnDelete();
+            $table->timestamps();
+        });
+
+        Schema::create('media_files', function ($table) {
+            $table->id();
+            $table->foreignId('uploaded_by_user_id')->nullable();
+            $table->foreignId('folder_id')->nullable()->constrained('media_folders')->nullOnDelete();
+            $table->string('name');
+            $table->string('caption')->nullable();
+            $table->string('alt_text')->nullable();
+            $table->unsignedBigInteger('size')->nullable();
+            $table->string('extension')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->unsignedInteger('width')->nullable();
+            $table->unsignedInteger('height')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('media', function ($table) {
             $table->id();
             $table->morphs('model');

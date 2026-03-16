@@ -34,8 +34,6 @@ class MediaManagerServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-
         Livewire::component('media-browser', MediaBrowser::class);
 
         $selectTreePath = dirname((new \ReflectionClass(SelectTree::class))->getFileName(), 2);
