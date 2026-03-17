@@ -44,16 +44,19 @@ php artisan vendor:publish --tag="media-manager-config"
 
 ## Styling
 
-If you are using a [Custom Filament Theme](https://filamentphp.com/docs/5.x/styling/overview#creating-a-custom-theme), you must ensure the plugin's styles are included in your CSS build.
+If you are using a [Custom Filament Theme](https://filamentphp.com/docs/5.x/styling/overview#creating-a-custom-theme), you must include both the plugin's pre-defined styles and allow Tailwind to scan your components for utility classes.
 
-Add the following line to your `theme.css` file:
+Add the following lines to your `theme.css` file:
 
 ```css
 @import '../../../../vendor/slimani/filament-media-manager/resources/css/media-manager.css';
+
+@source '../../../../vendor/slimani/filament-media-manager/resources/**/*';
 ```
 
-> [!TIP]
-> While Tailwind v4 supports `@source`, we recommend using `@import` for this plugin. This ensures that styles are loaded correctly even when using `path` repositories (symlinks) during development, which can sometimes cause issues with Tailwind's content scanner.
+### Why both?
+- **@import**: Loads the custom component styles (like the media grid and picker layouts) that are unique to this plugin.
+- **@source**: Allows Tailwind to scan the plugin's Blade files and generate any standard utility classes (like `p-4`, `flex`, etc.) that are used in the UI.
 
 ## Usage
 
