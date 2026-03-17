@@ -11,6 +11,20 @@ class MediaImageEntry extends ImageEntry
 {
     protected string $view = 'media-manager::infolists.components.media-image-entry';
 
+    protected string|\Closure|null $conversion = null;
+
+    public function conversion(string|\Closure|null $name): static
+    {
+        $this->conversion = $name;
+
+        return $this;
+    }
+
+    public function getConversion(): ?string
+    {
+        return $this->evaluate($this->conversion) ?? '';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

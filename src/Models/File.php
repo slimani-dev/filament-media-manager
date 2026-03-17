@@ -2,6 +2,7 @@
 
 namespace Slimani\MediaManager\Models;
 
+use Closure;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,6 +33,13 @@ class File extends Model implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
+
+    public static ?Closure $registerMediaConversionsUsing = null;
+
+    public static function registerMediaConversionsUsing(?Closure $callback): void
+    {
+        static::$registerMediaConversionsUsing = $callback;
+    }
 
     protected static function newFactory(): FileFactory
     {
@@ -76,6 +84,13 @@ class File extends Model implements HasMedia
             ->width(800)
             ->height(800)
             ->nonQueued();
+
+        if (static::$registerMediaConversionsUsing) {
+            app()->call(static::$registerMediaConversionsUsing, [
+                'file' => $this,
+                'media' => $media,
+            ]);
+        }
     }
 
     public function folder(): BelongsTo

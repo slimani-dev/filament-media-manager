@@ -108,6 +108,20 @@ class TestCase extends Orchestra
             $table->timestamps();
         });
 
+        Schema::create('media_tags', function ($table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->nullable();
+            $table->string('type')->nullable();
+            $table->integer('order_column')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('media_taggables', function ($table) {
+            $table->foreignId('tag_id')->constrained('media_tags')->cascadeOnDelete();
+            $table->morphs('taggable');
+        });
+
         Schema::create('media', function ($table) {
             $table->id();
             $table->morphs('model');

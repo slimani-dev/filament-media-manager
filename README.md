@@ -153,29 +153,6 @@ public static function form(Form $form): Form
 }
 ```
 
-### Plugin Customization
-
-You can customize the Media Manager directly in your Panel Provider:
-
-```php
-use Slimani\MediaManager\MediaManagerPlugin;
-
-MediaManagerPlugin::make()
-    ->navigationGroup('System')
-    ->navigationLabel('Assets')
-    ->navigationIcon('heroicon-o-folder')
-    ->navigationSort(5)
-    ->shouldRegisterNavigation(fn () => auth()->user()->isAdmin())
-    ->headerWidgets([
-        MyCustomWidget::class,
-    ])
-    ->footerWidgets([
-        AnotherWidget::class,
-    ])
-    ->header(view('custom.header'))
-    ->footer(view('custom.footer'))
-```
-
 ### Media Column
 
 Display media in your Filament tables using the `MediaColumn`:
@@ -202,6 +179,83 @@ MediaImageEntry::make('avatar')
 ```
 
 This component also supports a preview action that opens the file in a slide-over.
+
+
+### Plugin Customization
+
+You can customize the Media Manager directly in your Panel Provider:
+
+```php
+use Slimani\MediaManager\MediaManagerPlugin;
+
+MediaManagerPlugin::make()
+    ->navigationGroup('System')
+    ->navigationLabel('Assets')
+    ->navigationIcon('heroicon-o-folder')
+    ->navigationSort(5)
+    ->shouldRegisterNavigation(fn () => auth()->user()->isAdmin())
+    ->headerWidgets([
+        MyCustomWidget::class,
+    ])
+    ->footerWidgets([
+        AnotherWidget::class,
+    ])
+    ->header(view('custom.header'))
+    ->footer(view('custom.footer'))
+```
+
+#### Media Library Conversions
+
+You can customize or add media conversions from your application's `AppServiceProvider` or a dedicated Service Provider. Default conversions (`thumb` and `preview`) are registered first, and your callback can override them or add new ones.
+
+```php
+use Slimani\MediaManager\Models\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
+public function boot(): void
+{
+    File::registerMediaConversionsUsing(function (File $file, ?Media $media = null) {
+        // Override default 'thumb' (300x300)
+        $file->addMediaConversion('thumb')
+            ->width(150)
+            ->height(150)
+            ->nonQueued();
+
+        // Add a new custom conversion
+        $file->addMediaConversion('square')
+            ->width(500)
+            ->height(500)
+            ->nonQueued();
+        
+        // Default 'preview' (800x800) is kept if not overridden
+    });
+}
+```
+
+#### Using Conversions in Components
+
+After defining your conversions, you can specify which one to use in your components using the `conversion()` method. This controls which conversion is used for the table thumbnail, infolist image, or form picker preview.
+
+```php
+use Slimani\MediaManager\Tables\Columns\MediaColumn;
+use Slimani\MediaManager\Infolists\Components\MediaImageEntry;
+use Slimani\MediaManager\Form\MediaPicker;
+
+// In Tables
+MediaColumn::make('avatar')
+    ->conversion('thumb')
+
+// In Infolists
+MediaImageEntry::make('avatar')
+    ->conversion('preview')
+
+// In Forms (controls the picker's file preview)
+MediaPicker::make('avatar_id')
+    ->relationship('avatar')
+    ->conversion('thumb')
+```
+
+All components default to the `thumb` conversion if none is specified.
 
 ## Testing
 

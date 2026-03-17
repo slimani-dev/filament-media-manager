@@ -30,6 +30,20 @@ class MediaPicker extends FileUpload
 
     protected string|\Closure|null $directory = null;
 
+    protected string|\Closure|null $conversion = null;
+
+    public function conversion(string|\Closure|null $name): static
+    {
+        $this->conversion = $name;
+
+        return $this;
+    }
+
+    public function getConversion(): ?string
+    {
+        return $this->evaluate($this->conversion) ?? '';
+    }
+
     public function getPickerId(): string
     {
         return $this->pickerId ?? $this->getStatePath();
@@ -168,7 +182,7 @@ class MediaPicker extends FileUpload
 
             $media = $fileRecord->getFirstMedia('default');
 
-            $url = $fileRecord->getUrl();
+            $url = $fileRecord->getUrl($component->getConversion());
 
             return [
                 'name' => $media?->name ?? $media?->file_name ?? $fileRecord->name,

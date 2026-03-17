@@ -8,6 +8,20 @@ use Slimani\MediaManager\Models\File;
 
 class MediaColumn extends ImageColumn
 {
+    protected string|\Closure|null $conversion = null;
+
+    public function conversion(string|\Closure|null $name): static
+    {
+        $this->conversion = $name;
+
+        return $this;
+    }
+
+    public function getConversion(): ?string
+    {
+        return $this->evaluate($this->conversion) ?? 'thumb';
+    }
+
     public function getImageUrl(mixed $state = null): ?string
     {
         $state ??= $this->getState();
@@ -16,6 +30,6 @@ class MediaColumn extends ImageColumn
             $state = $state->first();
         }
 
-        return ($state instanceof File) ? $state->getUrl('thumb') : null;
+        return ($state instanceof File) ? $state->getUrl($this->getConversion()) : null;
     }
 }
