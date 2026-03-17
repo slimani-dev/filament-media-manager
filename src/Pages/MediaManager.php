@@ -34,6 +34,13 @@ class MediaManager extends Page implements HasActions, HasForms
         InteractsWithSchemas::getCachedSchemas as getBaseCachedSchemas;
     }
 
+    public function boot(): void
+    {
+        if (app()->runningUnitTests()) {
+            \Livewire\store($this)->set('forceRender', true);
+        }
+    }
+
     protected string $view = 'media-manager::filament.pages.media-manager';
 
     public static function getNavigationGroup(): ?string
