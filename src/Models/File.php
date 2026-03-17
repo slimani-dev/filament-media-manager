@@ -110,9 +110,9 @@ class File extends Model implements HasMedia
         return $this->belongsTo($userModel, 'uploaded_by_user_id');
     }
 
-    public function getUrl(string $conversion = ''): ?string
+    public function getUrl(string $conversion = '', ?string $collection = null): ?string
     {
-        $media = $this->getFirstMedia('default');
+        $media = $this->getFirstMedia($collection ?? 'default') ?? $this->getFirstMedia();
 
         if (! $media) {
             return null;

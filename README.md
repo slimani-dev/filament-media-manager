@@ -204,6 +204,63 @@ MediaFileEntry::make('cv')
 
 Both components support the media preview action that opens files in a slide-over.
 
+### Rich Text Editor Integration
+
+The Media Manager integrates deeply with Filament's `RichEditor`, allowing you to insert images directly from your media library and ensuring that images always use fresh, valid URLs (supporting signed/temporary URLs).
+
+#### 1. Prepare your Model
+
+Implement the `HasRichContent` interface and use the `InteractsWithRichContent` trait. Then, use `setUpRichContent` to register the media manager provider for your field.
+
+```php
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Slimani\MediaManager\Form\RichEditor\FileAttachmentProviders\MediaManagerFileAttachmentProvider;
+
+class User extends Authenticatable implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('resume')
+            ->fileAttachmentProvider(
+                MediaManagerFileAttachmentProvider::make()
+                    ->collection('preview')
+                    ->directory('User/Resumes')
+            );
+    }
+}
+```
+
+#### 2. Use in Forms
+
+Add the `MediaManagerRichContentPlugin` to your `RichEditor` component. This adds a "Media Library" button to the toolbar.
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Slimani\MediaManager\Form\RichEditor\MediaManagerRichContentPlugin;
+
+RichEditor::make('resume')
+    ->plugins([
+        MediaManagerRichContentPlugin::make(),
+    ])
+```
+
+#### 3. Use in Infolists (Dynamic Rendering)
+
+To ensure that images in your rich text always use fresh URLs (especially important if using temporary or signed URLs), use the `renderRichContent` method in your Infolist.
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('resume')
+    ->html()
+    ->state(fn ($record) => $record->renderRichContent('resume'))
+```
+
+This method parses the stored HTML and resolves each image ID into a fresh URL on the fly, solving the "expired link" problem entirely.
+
 
 ### Plugin Customization
 
