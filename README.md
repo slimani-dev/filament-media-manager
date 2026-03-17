@@ -175,20 +175,34 @@ MediaColumn::make('avatar')
     ->stacked()
 ```
 
-### Media Image Entry
+### Media Infolist Entries
 
-If you're using an Infolist, you can use the `MediaImageEntry` to display media:
+The package provides two types of infolist entries: `MediaImageEntry` for image-specific features and `MediaFileEntry` for general file types with preview actions.
+
+#### Media Image Entry
+Use `MediaImageEntry` when you want to display image thumbnails with native Filament `ImageEntry` features (circular, stacked, etc.) and media manager conversion support.
 
 ```php
 use Slimani\MediaManager\Infolists\Components\MediaImageEntry;
 
 MediaImageEntry::make('avatar')
     ->label('User Avatar')
-    ->circular() // Optional
-    ->width(100) // Optional
+    ->conversion('thumb') // Optional, defaults to 'thumb'
+    ->circular() // Native Filament feature
+    ->width(100)
 ```
 
-This component also supports a preview action that opens the file in a slide-over.
+#### Media File Entry
+Use `MediaFileEntry` for a generic media display that includes an automatic "Open Preview" action, ideal for documents, videos, and mixed media.
+
+```php
+use Slimani\MediaManager\Infolists\Components\MediaFileEntry;
+
+MediaFileEntry::make('cv')
+    ->label('User CV')
+```
+
+Both components support the media preview action that opens files in a slide-over.
 
 
 ### Plugin Customization
@@ -258,6 +272,9 @@ MediaColumn::make('avatar')
 // In Infolists
 MediaImageEntry::make('avatar')
     ->conversion('preview')
+
+MediaFileEntry::make('cv')
+    ->conversion('thumb')
 
 // In Forms (controls the picker's file preview)
 MediaPicker::make('avatar_id')
