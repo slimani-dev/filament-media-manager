@@ -210,12 +210,12 @@ The Media Manager integrates deeply with Filament's `RichEditor`, allowing you t
 
 #### 1. Prepare your Model
 
-Implement the `HasRichContent` interface and use the `InteractsWithRichContent` trait. Then, use `setUpRichContent` to register the media manager provider for your field.
+Implement the `HasRichContent` interface and use the `InteractsWithRichContent` trait. Then, use `setUpRichContent` to register the media manager configuration for your field.
 
 ```php
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Slimani\MediaManager\Form\RichEditor\FileAttachmentProviders\MediaManagerFileAttachmentProvider;
+use Slimani\MediaManager\Form\RichEditor\MediaManagerRichContentPlugin;
 
 class User extends Authenticatable implements HasRichContent
 {
@@ -224,14 +224,16 @@ class User extends Authenticatable implements HasRichContent
     public function setUpRichContent(): void
     {
         $this->registerRichContent('resume')
-            ->fileAttachmentProvider(
-                MediaManagerFileAttachmentProvider::make()
+            ->plugins([
+                MediaManagerRichContentPlugin::make()
                     ->collection('preview')
-                    ->directory('User/Resumes')
-            );
+                    ->directory('User/Resumes'),
+            ]);
     }
 }
 ```
+
+> **Note**: Implementing `HasFileAttachmentProvider` in the plugin means that Filament automatically resolves the correct provider. You no longer need to call `fileAttachmentProvider()` manually on the attribute or renderer.
 
 #### 2. Use in Forms
 
@@ -335,7 +337,6 @@ MediaFileEntry::make('cv')
 
 // In Forms (controls the picker's file preview)
 MediaPicker::make('avatar_id')
-    ->relationship('avatar')
     ->conversion('thumb')
 ```
 

@@ -6,20 +6,28 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasToolbarButtons;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Schemas\Components\Livewire;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Slimani\MediaManager\Form\RichEditor\FileAttachmentProviders\MediaManagerFileAttachmentProvider;
 use Slimani\MediaManager\Livewire\MediaBrowser;
 use Slimani\MediaManager\Models\File;
 
-class MediaManagerRichContentPlugin implements HasToolbarButtons, RichContentPlugin
+class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToolbarButtons, RichContentPlugin
 {
     public static function make(): static
     {
         return app(static::class);
+    }
+
+    public function getFileAttachmentProvider(): ?FileAttachmentProvider
+    {
+        return MediaManagerFileAttachmentProvider::make();
     }
 
     public function getTipTapPhpExtensions(): array
@@ -114,7 +122,7 @@ class MediaManagerRichContentPlugin implements HasToolbarButtons, RichContentPlu
                                         'src' => $url,
                                         'alt' => $file->name,
                                         'title' => $file->name,
-                                        'data-id' => $file->id,
+                                        'id' => $file->id,
                                     ],
                                 ],
                             ],
