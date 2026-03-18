@@ -15,10 +15,11 @@ use Filament\Schemas\Components\Livewire;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Slimani\MediaManager\Form\RichEditor\FileAttachmentProviders\MediaManagerFileAttachmentProvider;
+use Slimani\MediaManager\Form\RichEditor\Nodes\MediaFileNode;
 use Slimani\MediaManager\Livewire\MediaBrowser;
 use Slimani\MediaManager\Models\File;
 
-class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToolbarButtons, RichContentPlugin
+class MediaManagerRichContentPlugin implements HasToolbarButtons, RichContentPlugin, HasFileAttachmentProvider
 {
     public static function make(): static
     {
@@ -32,7 +33,9 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
 
     public function getTipTapPhpExtensions(): array
     {
-        return [];
+        return [
+            app(MediaFileNode::class),
+        ];
     }
 
     public function getTipTapJsExtensions(): array
@@ -107,26 +110,45 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
                     $commands = [];
 
                     foreach ($files as $file) {
-                        $url = $component->getFileAttachmentUrl($file->id);
+                        $isImage = str($file->mime_type)->startsWith('image/');
 
-                        if (! $url) {
-                            continue;
-                        }
+                        if ($isImage) {
+                            $url = $component->getFileAttachmentUrl($file->id);
 
-                        $commands[] = EditorCommand::make(
-                            'insertContent',
-                            arguments: [
-                                [
-                                    'type' => 'image',
-                                    'attrs' => [
-                                        'src' => $url,
-                                        'alt' => $file->name,
-                                        'title' => $file->name,
-                                        'id' => $file->id,
+                            if (! $url) {
+                                continue;
+                            }
+
+                            $commands[] = EditorCommand::make(
+                                'insertContent',
+                                arguments: [
+                                    [
+                                        'type' => 'image',
+                                        'attrs' => [
+                                            'src' => $url,
+                                            'alt' => $file->name,
+                                            'title' => $file->name,
+                                            'id' => $file->id,
+                                        ],
                                     ],
                                 ],
-                            ],
-                        );
+                            );
+                        } else {
+                            $commands[] = EditorCommand::make(
+                                'insertContent',
+                                arguments: [
+                                    [
+                                        'type' => 'mediaFile',
+                                        'attrs' => [
+                                            'id' => $file->id,
+                                            'name' => $file->name,
+                                            'extension' => $file->extension,
+                                            'size' => $file->size,
+                                        ],
+                                    ],
+                                ],
+                            );
+                        }
                     }
 
                     $component->runCommands($commands, $arguments['editorSelection'] ?? null);
