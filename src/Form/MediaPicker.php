@@ -157,13 +157,13 @@ class MediaPicker extends FileUpload
                         ])->key("media-browser-{$pickerId}-{$actionIndex}"),
 
                         Hidden::make('selected_ids')
-                            ->extraAttributes([
-                                'x-on:sync-picker-ids.window' => "if (\$event.detail.statePath === '{$statePath}') \$wire.set('{$statePath}', \$event.detail.ids, false)",
+                            ->extraAttributes(fn ($component) => [
+                                'x-on:sync-picker-ids.window' => "\$event.detail.statePath === '{$statePath}' ? \$wire.set('{$component->getStatePath()}', \$event.detail.ids, false) : null",
                             ]),
 
                         Hidden::make('current_folder_id')
-                            ->extraAttributes([
-                                'x-on:media-folder-changed.window' => "if (\$event.detail.statePath === '{$statePath}') \$wire.set('{$folderStatePath}', \$event.detail.folderId, false)",
+                            ->extraAttributes(fn ($component) => [
+                                'x-on:media-folder-changed.window' => "\$event.detail.statePath === '{$statePath}' ? \$wire.set('{$component->getStatePath()}', \$event.detail.folderId, false) : null",
                             ]),
                     ];
                 })

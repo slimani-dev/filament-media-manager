@@ -14,6 +14,7 @@ use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Schemas\Components\Livewire;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Log;
 use Slimani\MediaManager\Form\RichEditor\FileAttachmentProviders\MediaManagerFileAttachmentProvider;
 use Slimani\MediaManager\Form\RichEditor\Nodes\MediaFileNode;
 use Slimani\MediaManager\Livewire\MediaBrowser;
@@ -98,20 +99,12 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
                             'currentFolderId' => $currentFolderId ? (int) $currentFolderId : null,
                         ])->key("media-browser-{$pickerId}-{$actionIndex}"),
                         Hidden::make('selected_ids')
-                            ->extraAttributes([
-                                'x-on:sync-picker-ids.window' => "
-                                    if (\$event.detail.statePath === \"{$statePath}\") {
-                                        \$wire.set(\"{$statePath}\", \$event.detail.ids)
-                                    }
-                                ",
+                            ->extraAttributes(fn ($component) => [
+                                'x-on:sync-picker-ids.window' => "\$event.detail.statePath === '{$statePath}' ? \$wire.set('{$component->getStatePath()}', \$event.detail.ids) : null",
                             ]),
                         Hidden::make('current_folder_id')
-                            ->extraAttributes([
-                                'x-on:media-folder-changed.window' => "
-                                    if (\$event.detail.statePath === \"{$statePath}\") {
-                                        \$wire.set(\"{$folderStatePath}\", \$event.detail.folderId)
-                                    }
-                                ",
+                            ->extraAttributes(fn ($component) => [
+                                'x-on:media-folder-changed.window' => "\$event.detail.statePath === '{$statePath}' ? \$wire.set('{$component->getStatePath()}', \$event.detail.folderId) : null",
                             ]),
                     ];
                 })
@@ -143,6 +136,11 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
                                 continue;
                             }
                         }
+
+                        Log::info('Media Manager Rich Editor Inserting File', [
+                            'id' => $file->id,
+                            'mime_type' => $file->mime_type,
+                        ]);
 
                         $isImage = str($file->mime_type)->startsWith('image/');
 
