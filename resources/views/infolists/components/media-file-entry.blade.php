@@ -17,6 +17,7 @@
         @forelse ($getFileRecords() as $file)
             @php
                 $isImage = str($file->mime_type)->startsWith('image/');
+                $isVideo = str($file->mime_type)->startsWith('video/');
             @endphp
 
             <div
@@ -33,15 +34,21 @@
                 ])
                 style="width: {{ $getWidth() ?? '100px' }}; height: {{ $getHeight() ?? '100px' }};"
             >
-                @if ($isImage)
+                @if ($isImage || $isVideo)
                     <img
-                        src="{{ $file->getUrl($getConversion()) }}"
+                        src="{{ $file->getUrl($isVideo ? 'thumb' : $getConversion()) }}"
                         alt="{{ $file->name }}"
                         @class([
                             'h-full w-full object-cover transition-transform duration-300 group-hover:scale-110',
                         ])
                         loading="lazy"
                     />
+
+                    @if ($isVideo)
+                        <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+                             <x-heroicon-s-play-circle class="h-8 w-8 text-white/70 drop-shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:text-white/90" />
+                        </div>
+                    @endif
                 @else
                     <div class="flex h-full w-full flex-col items-center justify-center gap-2 p-2">
                         <div class="relative transition-transform duration-300 group-hover:scale-110">

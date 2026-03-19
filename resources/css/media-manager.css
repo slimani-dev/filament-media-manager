@@ -30,6 +30,14 @@
     @apply w-20 h-20 text-amber-400 drop-shadow-sm transition-transform duration-300;
 }
 
+.fi-media-item-video-icon {
+    @apply absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 text-white/70 drop-shadow-lg transition-transform duration-300 pointer-events-none z-10;
+}
+
+.fi-media-item:hover .fi-media-item-video-icon {
+    @apply scale-110 text-white/90;
+}
+
 .fi-media-item:hover .fi-media-item-folder-icon {
     @apply scale-110;
 }
@@ -137,6 +145,7 @@
 .fi-media-extension-badge.ext-mp4,
 .fi-media-extension-badge.ext-mov,
 .fi-media-extension-badge.ext-avi,
+.fi-media-extension-badge.ext-webm,
 .fi-media-extension-badge.ext-mkv {
     @apply bg-purple-100 text-purple-700 border-purple-200;
 }
@@ -148,4 +157,10 @@
 .fi-media-extension-badge.ext-tar,
 .fi-media-extension-badge.ext-gz {
     @apply bg-amber-100 text-amber-700 border-amber-200;
+}
+
+/* Text (Slate) */
+.fi-media-extension-badge.ext-md,
+.fi-media-extension-badge.ext-txt {
+    @apply bg-slate-100 text-slate-700 border-slate-200;
 }
