@@ -17,6 +17,35 @@ A comprehensive media manager plugin for Filament v4 and v5.
 - **Taggable media**: Add tags to your files for easier searching and filtering.
 - **Support for multiple disks**: Configure which disk to use for storage per field or globally.
 
+## Screenshots
+
+### Media Manager Overview
+![Media Manager Overview](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.35.40.png)
+
+### File Upload
+![Folder Navigation](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.36.12.png)
+
+### File Details
+![](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.36.41.png)
+
+### File Preview
+![](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.36.46.png)
+
+### Filter, Search and Sort (with Multiple selectin and Actions)
+![Rich Text Editor Integration](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.37.50.png)
+
+### Move Action Dialoge
+![File Details](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.36.36.png)
+
+### Filtering by Type (Document) and Sorting By size
+![Image Editor](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.39.24.png)
+
+### Rich Text Integration, Media Picker, MediaEntries 
+![Bulk Actions](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.40.41.png)
+
+### Media Picker (in Action)
+![Settings & Configuration](https://s3.slimani.dev/media-manager/Screen%20Shot%202026-03-19%20at%2021.41.23.png)
+
 ## Installation
 
 You can install the package via composer:
