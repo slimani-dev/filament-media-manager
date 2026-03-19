@@ -518,12 +518,12 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                                                     ->badge();
                                                             } else {
                                                                 return Flex::make([
-                                                                    TextEntry::make('items_count')
+                                                                    TextEntry::make('extension')
                                                                         ->hiddenLabel()
-                                                                        ->state(str($item->extension)->upper() ?? 'FILE')
+                                                                        ->state(filled($item->extension) ? str($item->extension)->upper() : 'FILE')
                                                                         ->size(TextSize::ExtraSmall)
                                                                         ->badge(),
-                                                                    TextEntry::make('items_count')
+                                                                    TextEntry::make('size')
                                                                         ->hiddenLabel()
                                                                         ->state(Number::fileSize($item->size ?? 0))
                                                                         ->size(TextSize::ExtraSmall)
