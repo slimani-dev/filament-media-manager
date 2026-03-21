@@ -22,7 +22,7 @@
     "require-dev": {
         "laravel/pint": "^1.0",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^10.0",
+        "orchestra/testbench": "^10.0|^11.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0",
         "pestphp/pest-plugin-livewire": "^4.0",
@@ -56,7 +56,7 @@
     },
     "license": "MIT",
     "require": {
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^12.0|^13.0",
         "codewithdennis/filament-select-tree": "^4.0",
         "filament/filament": "^4.0|^5.0",
         "filament/spatie-laravel-media-library-plugin": "^4.0|^5.0",
