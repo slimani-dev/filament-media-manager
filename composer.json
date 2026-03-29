@@ -57,7 +57,7 @@
     "license": "MIT",
     "require": {
         "laravel/framework": "^12.0|^13.0",
-        "codewithdennis/filament-select-tree": "^4.0",
+        "codewithdennis/filament-select-tree": "^4.0|^5.0",
         "filament/filament": "^4.0|^5.0",
         "filament/spatie-laravel-media-library-plugin": "^4.0|^5.0",
         "hugomyb/filament-media-action": "^4.0|^5.0",
