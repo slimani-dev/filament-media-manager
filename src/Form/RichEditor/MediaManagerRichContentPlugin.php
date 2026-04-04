@@ -158,8 +158,8 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
                                         'type' => 'image',
                                         'attrs' => [
                                             'src' => $url,
-                                            'alt' => $file->name,
-                                            'title' => $file->name,
+                                            'alt' => $file->alt_text ?? $file->name,
+                                            'title' => $file->caption ?? $file->name,
                                             'id' => $file->id,
                                         ],
                                     ],

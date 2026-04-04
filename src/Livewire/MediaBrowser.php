@@ -1108,6 +1108,10 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ->state($file->caption)
                 ->visible((bool) $file->caption),
 
+            TextEntry::make('alt_text')
+                ->state($file->alt_text)
+                ->visible((bool) $file->alt_text),
+
             TextEntry::make('sel_path')
                 ->label('Public URL')
                 ->state($file->getUrl())
