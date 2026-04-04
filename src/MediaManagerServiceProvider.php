@@ -3,10 +3,12 @@
 namespace Slimani\MediaManager;
 
 use CodeWithDennis\FilamentSelectTree\SelectTree;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
+use Slimani\MediaManager\Form\RichEditor\Nodes\MediaImageNode;
 use Slimani\MediaManager\Livewire\MediaBrowser;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -30,6 +32,16 @@ class MediaManagerServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->hasViews()
             ->hasMigrations($migrations);
+    }
+
+    public function packageRegistered(): void
+    {
+        parent::packageRegistered();
+
+        $this->app->bind(
+            ImageExtension::class,
+            MediaImageNode::class
+        );
     }
 
     public function packageBooted(): void

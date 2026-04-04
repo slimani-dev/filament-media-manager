@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Log;
 use Slimani\MediaManager\Form\RichEditor\FileAttachmentProviders\MediaManagerFileAttachmentProvider;
 use Slimani\MediaManager\Form\RichEditor\Nodes\MediaFileNode;
+use Slimani\MediaManager\Form\RichEditor\Nodes\MediaImageNode;
 use Slimani\MediaManager\Livewire\MediaBrowser;
 use Slimani\MediaManager\Models\File;
 
@@ -50,6 +51,7 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
     {
         return [
             app(MediaFileNode::class),
+            app(MediaImageNode::class),
         ];
     }
 
@@ -145,7 +147,7 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
                         $isImage = str($file->mime_type)->startsWith('image/');
 
                         if ($isImage) {
-                            $url = $component->getFileAttachmentUrl($file->id);
+                            $url = $file->getUrl();
 
                             if (! $url) {
                                 continue;
@@ -158,14 +160,15 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
                                         'type' => 'image',
                                         'attrs' => [
                                             'src' => $url,
-                                            'alt' => $file->name,
-                                            'title' => $file->name,
+                                            'alt' => $file->alt_text ?? $file->name,
+                                            'title' => $file->caption ?? $file->name,
                                             'id' => $file->id,
                                         ],
                                     ],
                                 ],
                             );
                         } else {
+
                             $commands[] = EditorCommand::make(
                                 'insertContent',
                                 arguments: [
