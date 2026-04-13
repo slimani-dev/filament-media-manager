@@ -17,9 +17,9 @@ class MediaManagerPlugin implements Plugin
 
     protected string|Closure|null $disk = null;
 
-    protected string|Closure $navigationGroup = 'Content';
+    protected string|Closure|null $navigationGroup = null;
 
-    protected string|Closure $navigationLabel = 'Media Manager';
+    protected string|Closure|null $navigationLabel = null;
 
     protected string|Closure|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
@@ -86,7 +86,7 @@ class MediaManagerPlugin implements Plugin
         return $this->evaluate($this->disk) ?? config('media-library.disk_name', 'media');
     }
 
-    public function navigationGroup(string|Closure $group): static
+    public function navigationGroup(string|Closure|null $group): static
     {
         $this->navigationGroup = $group;
 
@@ -99,7 +99,7 @@ class MediaManagerPlugin implements Plugin
             ?? __('media-manager::media-manager.navigation.group');
     }
 
-    public function navigationLabel(string|Closure $label): static
+    public function navigationLabel(string|Closure|null $label): static
     {
         $this->navigationLabel = $label;
 

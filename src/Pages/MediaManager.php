@@ -18,6 +18,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Size;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -59,6 +60,11 @@ class MediaManager extends Page implements HasActions, HasForms
     public static function getNavigationLabel(): string
     {
         return static::getPlugin()->getNavigationLabel();
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('media-manager::media-manager.title');
     }
 
     public static function getNavigationIcon(): string|\BackedEnum|null

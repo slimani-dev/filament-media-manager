@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Media Manager',
     'navigation' => [
         'group' => 'Content',
         'label' => 'Media Manager',

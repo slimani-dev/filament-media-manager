@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'navigation' =>[
+    'title' => 'مدير الوسائط',
+    'navigation' => [
         'group' => 'المحتوى',
         'label' => 'مدير الوسائط',
     ],
 
-    'actions' =>[
+    'actions' => [
         'browse' => 'تصفح',
         'browse_media' => 'تصفح الوسائط',
         'cancel' => 'إلغاء',
@@ -36,7 +37,7 @@ return [
         'edit' => 'تعديل',
         'replace_file' => 'استبدال الملف',
     ],
-    'fields' =>[
+    'fields' => [
         'search_files' => 'البحث في الملفات...',
         'sort' => 'فرز',
         'folder_name' => 'اسم المجلد',
@@ -54,14 +55,14 @@ return [
         'specific_conversions' => 'تحويلات محددة',
     ],
 
-    'sort' =>[
+    'sort' => [
         'name' => 'الاسم',
         'created_at' => 'التاريخ',
         'size' => 'الحجم',
         'mime_type' => 'النوع',
     ],
 
-    'types' =>[
+    'types' => [
         'image' => 'صور',
         'video' => 'فيديو',
         'audio' => 'صوت',
@@ -69,7 +70,7 @@ return [
         'archive' => 'أرشيف',
     ],
 
-    'messages' =>[
+    'messages' => [
         'show_hidden_folders' => 'إظهار المجلدات المخفية',
         'empty_folder' => 'هذا المجلد فارغ.',
         'no_files_found' => 'لم يتم العثور على ملفات',
@@ -99,7 +100,7 @@ return [
         'alt_text_help' => 'يُستخدم لسمة النص البديل (alt) للصورة وتحسين محركات البحث (SEO).',
     ],
 
-    'details' =>[
+    'details' => [
         'folder' => 'المجلد',
         'size' => 'الحجم',
         'type' => 'النوع',
@@ -112,7 +113,7 @@ return [
         'tags' => 'الوسوم',
     ],
 
-    'common' =>[
+    'common' => [
         'item_count' => '{0} 0 عناصر|{1} عنصر واحد|[2,*] :count عناصر',
         'items_selected' => '{1} تم تحديد عنصر واحد|[2,*] تم تحديد :count عناصر',
         'file_fallback' => 'ملف',
