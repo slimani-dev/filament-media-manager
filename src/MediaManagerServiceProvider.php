@@ -31,6 +31,7 @@ class MediaManagerServiceProvider extends PackageServiceProvider
 
         $package->name(static::$name)
             ->hasViews()
+            ->hasTranslations()
             ->hasMigrations($migrations);
     }
 

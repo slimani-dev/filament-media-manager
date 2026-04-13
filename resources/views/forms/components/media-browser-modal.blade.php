@@ -16,11 +16,11 @@
 
     <div class="flex items-center justify-end gap-x-3 p-4 border-t dark:border-gray-700">
         <x-filament::button color="gray" x-on:click="$dispatch('close-modal', { id: '{{ $this->getId() }}' })">
-            {{ __('Cancel') }}
+            {{ __('media-manager::media-manager.actions.cancel') }}
         </x-filament::button>
 
         <x-filament::button x-on:click="submit" x-bind:disabled="!selectedFile">
-            {{ __('Select') }}
+            {{ __('media-manager::media-manager.actions.select') }}
         </x-filament::button>
     </div>
 </div>

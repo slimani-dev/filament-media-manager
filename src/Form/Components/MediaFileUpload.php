@@ -61,7 +61,7 @@ class MediaFileUpload extends FileUpload
 
         $this->hintAction(
             Action::make('browse')
-                ->label('Browse')
+                ->label(__('media-manager::media-manager.actions.browse_media'))
                 ->icon('heroicon-m-folder')
                 ->modalContent(fn (MediaFileUpload $component) => view(/** @var view-string */ 'media-manager::forms.components.media-browser-modal', [
                     'statePath' => $component->getStatePath(),

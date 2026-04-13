@@ -125,7 +125,7 @@ class MediaPicker extends FileUpload
 
         $this->hintAction(
             Action::make('browse_media')
-                ->label('Browse Media')
+                ->label(__('media-manager::media-manager.actions.browse_media'))
                 ->icon(Heroicon::FolderOpen)
                 ->color('primary')
                 ->schema(function (MediaPicker $component, Action $action): array {

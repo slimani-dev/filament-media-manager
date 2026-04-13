@@ -112,40 +112,48 @@ class MediaManager extends Page implements HasActions, HasForms
 
         return [
             Action::make('version')
-                ->label($hasUpdate ? "Update available: {$versionInfo['latestVersion']}" : $version)
+                ->label($hasUpdate
+                ? __('media-manager::media-manager.messages.update_available', ['version' => $versionInfo['latestVersion']])
+                : $version)
                 ->icon($hasUpdate ? 'heroicon-m-arrow-path' : null)
                 ->url('https://github.com/slimani-dev/filament-media-manager/releases', true)
                 ->link()
                 ->size(Size::ExtraSmall)
                 ->color($hasUpdate ? Color::Red : Color::Gray)
-                ->tooltip($hasUpdate ? "Current version {$version}" : 'up to date ✅'),
+                ->tooltip($hasUpdate
+                ? __('media-manager::media-manager.messages.current_version', ['version' => $version])
+                : __('media-manager::media-manager.messages.up_to_date')),
 
             ActionGroup::make([
                 Action::make('regenerate_conversions')
-                    ->label(__('Regenerate Conversions'))
+                    ->label(__('media-manager::media-manager.actions.regenerate_conversions'))
                     ->icon('heroicon-m-arrow-path')
                     ->schema([
                         Select::make('conversions')
-                            ->label(__('Specific Conversions'))
+                            ->label(__('media-manager::media-manager.fields.specific_conversions'))
+                            ->helperText(__('media-manager::media-manager.messages.specific_conversions_help'))
                             ->multiple()
                             ->options(function () {
                                 $file = new File;
                                 $file->registerMediaConversions();
 
                                 return collect($file->mediaConversions)->mapWithKeys(fn ($c) => [$c->getName() => $c->getName()])->toArray();
-                            })
-                            ->helperText(__('Select specific conversions to regenerate. Leave empty for all.')),
+                            }),
                         Checkbox::make('only_missing')
-                            ->label(__('Only Missing'))
+                            ->label(__('media-manager::media-manager.actions.only_missing'))
                             ->default(true),
                         Checkbox::make('with_responsive_images')
-                            ->label(__('With Responsive Images')),
+                            ->label(__('media-manager::media-manager.actions.with_responsive_images')),
                         Checkbox::make('force')
-                            ->label(__('Force Regeneration')),
+                            ->label(__('media-manager::media-manager.actions.force_regeneration')),
                     ])
-                    ->modalHeading(fn () => count($this->selectedFileIds) > 0 ? __('Regenerate Conversions for :count items', ['count' => count($this->selectedFileIds)]) : __('Regenerate Conversions for all items'))
-                    ->modalDescription(fn () => count($this->selectedFileIds) > 0 ? null : __('This will regenerate conversions for all media items in the library. This may take some time.'))
-                    ->successNotificationTitle(__('Media regeneration started successfully.'))
+                    ->modalHeading(fn () => count($this->selectedFileIds) > 0
+                        ? __('media-manager::media-manager.messages.regenerate_for_selected', ['count' => count($this->selectedFileIds)])
+                        : __('media-manager::media-manager.messages.regenerate_for_all'))
+                    ->modalDescription(fn () => count($this->selectedFileIds) > 0
+                        ? null
+                        : __('media-manager::media-manager.messages.regenerate_for_all_description'))
+                    ->successNotificationTitle(__('media-manager::media-manager.messages.regeneration_started'))
                     ->action(function (array $data) {
                         $params = [
                             'modelType' => File::class,
@@ -176,7 +184,7 @@ class MediaManager extends Page implements HasActions, HasForms
                         } catch (\Exception $e) {
                             Notification::make()
                                 ->danger()
-                                ->title(__('Error regenerating media: ').$e->getMessage())
+                                ->title(__('media-manager::media-manager.messages.regeneration_error', ['message' => $e->getMessage()]))
                                 ->send();
 
                             return;

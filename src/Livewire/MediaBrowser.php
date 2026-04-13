@@ -268,7 +268,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function toggleDetailsAction(): Action
     {
         return Action::make('toggleDetails')
-            ->label('Details')
+            ->label(__('media-manager::media-manager.actions.details'))
             ->icon('heroicon-o-information-circle')
             ->hiddenLabel()
             ->color(fn () => $this->showDetails ? 'primary' : 'gray')
@@ -281,7 +281,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function toggleFiltersAction(): Action
     {
         return Action::make('toggleFilters')
-            ->label('Filters')
+            ->label(__('media-manager::media-manager.actions.filters'))
             ->hiddenLabel()
             ->icon('heroicon-o-funnel')
             ->color(fn () => $this->showFilters || $this->hasActiveFilters() ? 'primary' : 'gray')
@@ -295,7 +295,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function toggleSortDirectionAction(): Action
     {
         return Action::make('toggleSortDirection')
-            ->label('Sort Direction')
+            ->label(__('media-manager::media-manager.actions.sort_direction'))
             ->hiddenLabel()
             ->icon(fn () => $this->sortDirection === 'asc' ? 'heroicon-o-bars-arrow-up' : 'heroicon-o-bars-arrow-down')
             ->color('gray')
@@ -355,20 +355,20 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                     ->live()
                                     ->debounce()
                                     ->hiddenLabel()
-                                    ->placeholder('Search files...')
+                                    ->placeholder(__('media-manager::media-manager.fields.search_files'))
                                     ->prefixIcon('heroicon-m-magnifying-glass')
                                     ->columnSpan(1),
                                 Flex::make([
                                     Select::make('sortField')
                                         ->hiddenLabel()
                                         ->options([
-                                            'name' => 'Name',
-                                            'created_at' => 'Date',
-                                            'size' => 'Size',
-                                            'mime_type' => 'Type',
+                                            'name' => __('media-manager::media-manager.sort.name'),
+                                            'created_at' => __('media-manager::media-manager.sort.created_at'),
+                                            'size' => __('media-manager::media-manager.sort.size'),
+                                            'mime_type' => __('media-manager::media-manager.sort.mime_type'),
                                         ])
+                                        ->placeholder(__('media-manager::media-manager.fields.sort'))
                                         ->live()
-                                        ->placeholder('Sort')
                                         ->extraAttributes([
                                             'class' => 'md:w-32',
                                         ])->grow(),
@@ -391,32 +391,32 @@ class MediaBrowser extends Component implements HasActions, HasForms
                             ->schema([
                                 Grid::make(['default' => 1, 'md' => 4])->schema([
                                     Select::make('filterType')
-                                        ->label('File Type')
+                                        ->label(__('media-manager::media-manager.fields.file_type'))
                                         ->options([
-                                            'image' => 'Images',
-                                            'video' => 'Videos',
-                                            'audio' => 'Audio',
-                                            'document' => 'Documents',
-                                            'archive' => 'Archives',
+                                            'image' => __('media-manager::media-manager.types.image'),
+                                            'video' => __('media-manager::media-manager.types.video'),
+                                            'audio' => __('media-manager::media-manager.types.audio'),
+                                            'document' => __('media-manager::media-manager.types.document'),
+                                            'archive' => __('media-manager::media-manager.types.archive'),
                                         ])
-                                        ->placeholder('All Types')
+                                        ->placeholder(__('media-manager::media-manager.fields.all_types'))
                                         ->live()
                                         ->columnSpan(1),
                                     Select::make('filterTags')
-                                        ->label('Tags')
+                                        ->label(__('media-manager::media-manager.fields.tags'))
                                         ->multiple()
                                         ->options(Tag::pluck('name', 'id'))
                                         ->live()
                                         ->searchable()
                                         ->columnSpan(1),
                                     TextInput::make('filterSizeMin')
-                                        ->label('Min Size (MB)')
+                                        ->label(__('media-manager::media-manager.fields.min_size_mb'))
                                         ->numeric()
                                         ->live()
                                         ->debounce()
                                         ->columnSpan(1),
                                     TextInput::make('filterSizeMax')
-                                        ->label('Max Size (MB)')
+                                        ->label(__('media-manager::media-manager.fields.max_size_mb'))
                                         ->numeric()
                                         ->live()
                                         ->debounce()
@@ -467,8 +467,8 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                     ])
                                     ->visible(fn () => $this->getItemsProperty()->isNotEmpty()),
 
-                                EmptyState::make('No files found')
-                                    ->description('Upload a file or create a folder to get started.')
+                                EmptyState::make(__('media-manager::media-manager.messages.no_files_found'))
+                                    ->description(__('media-manager::media-manager.messages.upload_or_create'))
                                     ->icon(Heroicon::Document)
                                     ->contained(false)
                                     ->footer([
@@ -485,7 +485,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                             ->contained(false),
 
                         \Slimani\MediaManager\Components\Section::make()
-                            ->heading('Details')
+                            ->heading(__('media-manager::media-manager.actions.details'))
                             ->extraAttributes([
                                 'class' => 'flex h-full no-negative-header-margin',
                             ])
@@ -503,7 +503,11 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                             return [
                                                 TextEntry::make('selection_title')
                                                     ->hiddenLabel()
-                                                    ->state(fn () => count($this->selectedItems).' items selected')
+                                                    ->state(fn () => trans_choice(
+                                                        'media-manager::media-manager.common.items_selected',
+                                                        count($this->selectedItems),
+                                                        ['count' => count($this->selectedItems)]
+                                                    ))
                                                     ->weight(FontWeight::Bold)
                                                     ->size(TextSize::Large),
 
@@ -523,7 +527,11 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
                                                                 return TextEntry::make('items_count')
                                                                     ->hiddenLabel()
-                                                                    ->state(" {$itemsCount} items")
+                                                                    ->state(trans_choice(
+                                                                        'media-manager::media-manager.common.item_count',
+                                                                        $itemsCount,
+                                                                        ['count' => $itemsCount]
+                                                                    ))
                                                                     ->size(TextSize::ExtraSmall)
                                                                     ->color('gray')
                                                                     ->badge();
@@ -573,17 +581,17 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                                     ]),
 
                                                 TextEntry::make('selection_size')
-                                                    ->label('Total Size')
+                                                    ->label(__('media-manager::media-manager.details.total_size'))
                                                     ->state(fn () => Number::fileSize($this->getSelectedItemsDataProperty()['size'] ?? 0))
                                                     ->badge(),
 
                                                 Flex::make([
                                                     TextEntry::make('selection_files')
-                                                        ->label('Files')
+                                                        ->label(__('media-manager::media-manager.details.files'))
                                                         ->state(fn () => collect($this->selectedItems)->filter(fn ($i) => str_starts_with($i, 'file-'))->count())
                                                         ->badge(),
                                                     TextEntry::make('selection_folders')
-                                                        ->label('Folders')
+                                                        ->label(__('media-manager::media-manager.details.folders'))
                                                         ->state(fn () => $this->getSelectedItemsDataProperty()['folders_count'] ?? 0)
                                                         ->visible(fn () => ($this->getSelectedItemsDataProperty()['folders_count'] ?? 0) > 0)
                                                         ->badge(),
@@ -626,13 +634,13 @@ class MediaBrowser extends Component implements HasActions, HasForms
                                         return [
                                             TextEntry::make('root_info')
                                                 ->hiddenLabel()
-                                                ->state('Media Library')
+                                                ->label(__('media-manager::media-manager.messages.library'))
                                                 ->weight(FontWeight::Bold)
                                                 ->size(TextSize::Large),
 
                                             TextEntry::make('root_desc')
                                                 ->hiddenLabel()
-                                                ->state('Select a file or folder to view details.')
+                                                ->state(__('media-manager::media-manager.messages.select_file_or_folder'))
                                                 ->color('gray'),
                                         ];
                                     }),
@@ -1095,11 +1103,11 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
             Flex::make([
                 TextEntry::make('sel_size')
-                    ->label('Size')
+                    ->label(__('media-manager::media-manager.details.size'))
                     ->state(Number::fileSize($file->size ?? 0))
                     ->badge(),
                 TextEntry::make('sel_type')
-                    ->label('Type')
+                    ->label(__('media-manager::media-manager.details.type'))
                     ->state($file->mime_type)
                     ->badge(),
             ]),
@@ -1113,7 +1121,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ->visible((bool) $file->alt_text),
 
             TextEntry::make('sel_path')
-                ->label('Public URL')
+                ->label(__('media-manager::media-manager.details.public_url'))
                 ->state($file->getUrl())
                 ->copyable()
                 ->limit(30)
@@ -1134,13 +1142,13 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ]),
 
             TextEntry::make('sel_created_at')
-                ->label('Uploaded')
+                ->label(__('media-manager::media-manager.details.uploaded'))
                 ->state($file->created_at)
                 ->since()
                 ->color('gray'),
 
             TagsInput::make('activeTags')
-                ->label('Tags')
+                ->label(__('media-manager::media-manager.details.tags'))
                 ->suggestions(Tag::pluck('name')->toArray())
                 ->live()
                 ->visible(fn () => $this->isEditingTags)
@@ -1152,8 +1160,10 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ),
 
             TextEntry::make('tags_display')
-                ->label('Tags')
-                ->state($file->tags->pluck('name') ?: 'No tags')
+                ->label(__('media-manager::media-manager.details.tags'))
+                ->state($file->tags->pluck('name')->isNotEmpty()
+                    ? $file->tags->pluck('name')
+                    : __('media-manager::media-manager.messages.no_tags'))
                 ->visible(fn () => ! $this->isEditingTags)
                 ->badge()
                 ->hintAction(
@@ -1177,18 +1187,18 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
         return [
             TextEntry::make('sel_folder_name')
-                ->label('Folder')
+                ->label(__('media-manager::media-manager.details.folders'))
                 ->state($folder->name)
                 ->weight(FontWeight::Bold)
                 ->size(TextSize::Large),
 
             TextEntry::make('sel_folder_created_at')
-                ->label('Created')
+                ->label(__('media-manager::media-manager.details.created'))
                 ->state($folder->created_at)
                 ->date(),
 
             TextEntry::make('sel_folder_total_size')
-                ->label('Total Size')
+                ->label(__('media-manager::media-manager.details.total_size'))
                 ->state(Number::fileSize($recursiveStats['total_size']))
                 ->badge()
                 ->color('success'),
@@ -1207,19 +1217,19 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
                 // Separated Files Count
                 TextEntry::make('sel_folder_recursive_files')
-                    ->label('Files')
+                    ->label(__('media-manager::media-manager.details.files'))
                     ->state($recursiveStats['files_count'])
                     ->badge(),
 
                 // Separated Folders Count (Nested sub-folders)
                 TextEntry::make('sel_folder_recursive_folders')
-                    ->label('Folders')
+                    ->label(__('media-manager::media-manager.details.folders'))
                     ->state($recursiveStats['folders_count'])
                     ->badge(),
             ]),
 
             TagsInput::make('activeTags')
-                ->label('Tags')
+                ->label(__('media-manager::media-manager.details.tags'))
                 ->suggestions(Tag::pluck('name')->toArray())
                 ->live()
                 ->visible(fn () => $this->isEditingTags)
@@ -1231,8 +1241,10 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 ),
 
             TextEntry::make('folder_tags_display')
-                ->label('Tags')
-                ->state($folder->tags->pluck('name') ?: 'No tags')
+                ->label(__('media-manager::media-manager.details.tags'))
+                ->state($folder->tags->pluck('name')->isNotEmpty()
+                    ? $folder->tags->pluck('name')
+                    : __('media-manager::media-manager.messages.no_tags'))
                 ->visible(fn () => ! $this->isEditingTags)
                 ->badge()
                 ->hintAction(
@@ -1396,7 +1408,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function clearSelectionAction(): Action
     {
         return Action::make('clearSelection')
-            ->label('Clear')
+           ->label(__('media-manager::media-manager.actions.clear'))
             ->icon(Heroicon::XMark)
             ->color('danger')
             ->outlined()
@@ -1406,27 +1418,27 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function bulkDeleteAction(): Action
     {
         return Action::make('bulkDelete')
-            ->label('Delete')
+            ->label(__('media-manager::media-manager.actions.delete'))
             ->icon(Heroicon::Trash)
             ->color('danger')
             ->requiresConfirmation()
-            ->modalHeading('Delete selected items?')
-            ->modalDescription('Are you sure you want to delete the selected items? This action cannot be undone.')
-            ->modalSubmitActionLabel('Yes, delete them')
+            ->modalHeading(__('media-manager::media-manager.messages.delete_selected_heading'))
+            ->modalDescription(__('media-manager::media-manager.messages.delete_selected_description'))
+            ->modalSubmitActionLabel(__('media-manager::media-manager.messages.yes_delete_them'))
             ->action(fn () => $this->deleteSelectedItems());
     }
 
     public function bulkMoveAction(): Action
     {
         return Action::make('bulkMove')
-            ->label('Move')
+            ->label(__('media-manager::media-manager.actions.move'))
             ->icon(Heroicon::ArrowsRightLeft)
             ->schema([
                 SelectTree::make('folder_id')
-                    ->label('Target Folder')
+                    ->label(__('media-manager::media-manager.fields.target_folder'))
                     ->query(Folder::query()->orderBy('name'), 'name', 'parent_id')
                     ->prepend([
-                        'name' => 'Root',
+                        'name' => __('media-manager::media-manager.messages.root'),
                         'value' => 0,
                     ])
                     ->enableBranchNode()
@@ -1453,11 +1465,11 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function createFolderAction(): Action
     {
         return Action::make('createFolder')
-            ->label('Create Folder')
+            ->label(__('media-manager::media-manager.actions.create_folder'))
             ->icon(Heroicon::OutlinedFolderPlus)
             ->schema([
                 TextInput::make('name')
-                    ->label('Folder Name')
+                    ->label(__('media-manager::media-manager.fields.folder_name'))
                     ->required(),
             ])
             ->action(function (array $data) {
@@ -1474,7 +1486,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function goUpAction(): Action
     {
         return Action::make('goUp')
-            ->label('Up')
+            ->label(__('media-manager::media-manager.actions.go_up'))
             ->icon('heroicon-m-arrow-left')
             ->iconButton()
             ->color('gray')
@@ -1491,19 +1503,22 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function uploadAction(): Action
     {
         return Action::make('upload')
-            ->label('Upload')
+            ->label(__('media-manager::media-manager.actions.upload'))
             ->icon('heroicon-m-arrow-up-tray')
             ->schema([
                 FileUpload::make('files')
-                    ->label('Files')
+                    ->label(__('media-manager::media-manager.fields.files'))
                     ->multiple()
                     ->preserveFilenames()
                     ->disk(fn () => filament('media-manager')->getDisk())
                     ->required(),
                 TagsInput::make('tags')
+                    ->label(__('media-manager::media-manager.fields.tags'))
                     ->suggestions(Tag::pluck('name')->toArray()),
-                TextInput::make('caption'),
-                TextInput::make('alt_text'),
+                TextInput::make('caption')
+                    ->label(__('media-manager::media-manager.fields.caption')),
+                TextInput::make('alt_text')
+                    ->label(__('media-manager::media-manager.fields.alt_text')),
             ])
             ->action(function (array $data) {
                 foreach ($data['files'] as $file) {
@@ -1621,7 +1636,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
         if (empty($fileIds)) {
             Notification::make()
-                ->title('Please select at least one file')
+                ->title(__('media-manager::media-manager.messages.please_select_at_least_one_file'))
                 ->warning()
                 ->send();
 
@@ -1667,7 +1682,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $this->dispatch('media-updated');
 
         Notification::make()
-            ->title('Items deleted successfully')
+            ->title(__('media-manager::media-manager.messages.items_deleted_successfully'))
             ->success()
             ->send();
     }
@@ -1723,7 +1738,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $this->dispatch('media-updated');
 
         Notification::make()
-            ->title('Items moved successfully')
+            ->title(__('media-manager::media-manager.messages.items_moved_successfully'))
             ->success()
             ->send();
     }

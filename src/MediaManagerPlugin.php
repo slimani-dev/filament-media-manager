@@ -95,7 +95,8 @@ class MediaManagerPlugin implements Plugin
 
     public function getNavigationGroup(): string
     {
-        return $this->evaluate($this->navigationGroup);
+        return $this->evaluate($this->navigationGroup)
+            ?? __('media-manager::media-manager.navigation.group');
     }
 
     public function navigationLabel(string|Closure $label): static
@@ -107,7 +108,8 @@ class MediaManagerPlugin implements Plugin
 
     public function getNavigationLabel(): string
     {
-        return $this->evaluate($this->navigationLabel);
+        return $this->evaluate($this->navigationLabel)
+            ?? __('media-manager::media-manager.navigation.label');
     }
 
     public function navigationIcon(string|Closure|\BackedEnum|null $icon): static

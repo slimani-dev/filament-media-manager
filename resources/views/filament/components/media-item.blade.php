@@ -86,7 +86,7 @@
                         <x-heroicon-s-document-text class="fi-media-item-file-icon" />
                         <span
                             class="absolute bottom-1 right-0 px-1 py-0.5 rounded fi-media-extension-badge ext-{{ strtolower($item->extension) }} text-[8px] font-bold uppercase ring-1 ring-white dark:ring-gray-800">
-                            {{ $item->extension ?? 'FILE' }}
+                            {{ $item->extension ?? __('media-manager::media-manager.common.file_fallback') }}
                         </span>
                     </div>
                 </div>
@@ -129,7 +129,9 @@
             <div
                 class="mt-1 flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 font-medium">
                 @if($isFolder)
-                    <span>{{ $item->children_count + $item->files_count }} items</span>
+                    <span>
+                     {{ trans_choice('media-manager::media-manager.common.item_count', $item->children_count + $item->files_count, ['count' => $item->children_count + $item->files_count]) }}
+                    </span>
                 @else
                     <span>{{ Number::fileSize($item->size ?? 0) }}</span>
                     <span class="uppercase tracking-wider opacity-60">{{ $item->extension }}</span>
