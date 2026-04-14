@@ -64,7 +64,7 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
     {
         return [
             RichEditorTool::make('mediaLibrary')
-                ->label('Media Library')
+                ->label(__('media-manager::media-manager.messages.library'))
                 ->icon(Heroicon::Photo)
                 ->action(),
         ];
@@ -74,9 +74,9 @@ class MediaManagerRichContentPlugin implements HasFileAttachmentProvider, HasToo
     {
         return [
             Action::make('mediaLibrary')
-                ->label('Media Library')
+                ->label(__('media-manager::media-manager.messages.library'))
                 ->modalWidth(Width::SixExtraLarge)
-                ->modalSubmitActionLabel('Insert')
+                ->modalSubmitActionLabel(__('media-manager::media-manager.actions.insert'))
                 ->schema(function (RichEditor $component, Action $action): array {
                     $pickerId = $component->getStatePath();
                     // Identify the correct state path inside the action modal

@@ -12,8 +12,9 @@
                     <p class="text-sm font-medium text-gray-700 dark:text-gray-200 truncate group-hover:text-primary-600"
                        title="{{ $folder->name }}">
                         {{ $folder->name }}</p>
-                    <span class="text-xs text-gray-400 mt-1">{{ $folder->children_count + $folder->files_count }}
-                        items</span>
+                    <span class="text-xs text-gray-400 mt-1">
+                       {{ trans_choice('media-manager::media-manager.common.item_count', $folder->children_count + $folder->files_count, ['count' => $folder->children_count + $folder->files_count]) }}
+                    </span>
 
                 </div>
             </a>
@@ -44,7 +45,7 @@
     @if ($folders->isEmpty() && $mediaFiles->isEmpty())
         <div class="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
             <x-heroicon-o-folder-open class="w-16 h-16 mb-4 opacity-50" />
-            <p>This folder is empty.</p>
+            <p>{{ __('media-manager::media-manager.messages.empty_folder') }}</p>
         </div>
     @endif
 </div>

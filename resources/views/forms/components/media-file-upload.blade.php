@@ -4,7 +4,7 @@
         isOpen: false,
         pickerId: '{{ $getId() }}',
         selectedFile: @js($field->getFile() ? ['url' => $field->getFile()->getUrl('preview'), 'name' => $field->getFile()->name] : null),
-    
+
         openModal() {
             this.isOpen = true;
             $dispatch('open-modal', { id: 'media-picker-modal-' + this.pickerId });
@@ -39,13 +39,13 @@
         <!-- Trigger Button -->
         <div x-show="!selectedFile">
             <x-filament::button @click="openModal" color="gray">
-                {{ __('Select File') }}
+                {{ __('media-manager::media-manager.actions.select_file') }}
             </x-filament::button>
         </div>
 
         <div x-show="selectedFile">
             <x-filament::button @click="openModal" color="gray" size="sm">
-                {{ __('Change File') }}
+                {{ __('media-manager::media-manager.actions.change_file') }}
             </x-filament::button>
         </div>
 
