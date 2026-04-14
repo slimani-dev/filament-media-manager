@@ -1187,7 +1187,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
         return [
             TextEntry::make('sel_folder_name')
-                ->label(__('media-manager::media-manager.details.folders'))
+                ->label(__('media-manager::media-manager.details.folder'))
                 ->state($folder->name)
                 ->weight(FontWeight::Bold)
                 ->size(TextSize::Large),
