@@ -1408,7 +1408,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function clearSelectionAction(): Action
     {
         return Action::make('clearSelection')
-           ->label(__('media-manager::media-manager.actions.clear'))
+            ->label(__('media-manager::media-manager.actions.clear'))
             ->icon(Heroicon::XMark)
             ->color('danger')
             ->outlined()
