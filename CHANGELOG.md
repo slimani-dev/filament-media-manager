@@ -2,6 +2,11 @@
 
 All notable changes to `filament-media-manager` will be documented in this file.
 
+## v0.16.2 - 2026-10-01
+
+### Fixed
+- **Filament 5.9 compatibility**: The media browser grid no longer fails with "MediaItem::make(): Argument #1 ($record) must be of type File|Folder, null given". Filament 5.9 builds repeatable entry items through `getDefaultChildSchemas()`, which now evaluates the per-item schema with the current item set.
+
 ## v0.15.0 - 2026-07-25
 
 ### Added

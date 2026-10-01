@@ -27,19 +27,41 @@ class RepeatableEntry extends BaseRepeatableEntry
 
     public function getItems(): array
     {
+        // Filament 5.9+ builds and caches the item schemas through getDefaultChildSchemas().
+        if (property_exists(BaseRepeatableEntry::class, 'cachedItemsState')) {
+            return parent::getItems();
+        }
+
+        return $this->getDefaultChildSchemas();
+    }
+
+    /**
+     * Builds one schema per item, evaluating the schema closure while that item
+     * is current so `$component->getItem()` can be used inside it.
+     *
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        $state = method_exists($this, 'normalizeItemsState')
+            ? $this->normalizeItemsState($this->getState() ?? [])
+            : ($this->getState() ?? []);
+
+        if (property_exists($this, 'cachedItemsState')) {
+            $this->cachedItemsState = $state;
+        }
+
         $containers = [];
 
-        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
+        foreach ($state as $itemKey => $itemData) {
             $this->currentItem = $itemData;
             $this->currentItemKey = $itemKey;
 
-            // We manually evaluate the schema closure here to support per-item schema definition
-            // allowing usage of $component->getItem() inside the schema closure.
             $components = $this->evaluate($this->childComponents['default'] ?? []) ?? [];
 
             $container = Schema::make($this->getLivewire())
                 ->parentComponent($this)
-                ->components($components) // Set the evaluated components
+                ->components($components)
                 ->statePath($itemKey)
                 ->inlineLabel(false);
 
