@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Sem tags',
         'please_select_at_least_one_file' => 'Selecione pelo menos um arquivo',
         'items_deleted_successfully' => 'Itens excluídos com sucesso',
+        'delete_not_allowed' => '{1} Você não tem permissão para excluir este item.|[2,*] :count itens não foram excluídos porque você não tem permissão para excluí-los.',
         'items_moved_successfully' => 'Itens movidos com sucesso',
         'up_to_date' => 'atualizado ✅',
         'root' => 'Raiz',

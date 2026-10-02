@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Aucun tag',
         'please_select_at_least_one_file' => 'Veuillez sélectionner au moins un fichier',
         'items_deleted_successfully' => 'Éléments supprimés avec succès',
+        'delete_not_allowed' => '{1} Vous n\'êtes pas autorisé à supprimer cet élément.|[2,*] :count éléments n\'ont pas été supprimés car vous n\'êtes pas autorisé à les supprimer.',
         'items_moved_successfully' => 'Éléments déplacés avec succès',
         'up_to_date' => 'à jour ✅',
         'root' => 'Racine',

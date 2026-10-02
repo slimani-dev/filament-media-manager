@@ -85,6 +85,7 @@ return [
         'no_tags' => 'Keine Tags',
         'please_select_at_least_one_file' => 'Bitte wählen Sie mindestens eine Datei aus',
         'items_deleted_successfully' => 'Elemente erfolgreich gelöscht',
+        'delete_not_allowed' => '{1} Sie dürfen dieses Element nicht löschen.|[2,*] :count Elemente wurden nicht gelöscht, da Sie sie nicht löschen dürfen.',
         'items_moved_successfully' => 'Elemente erfolgreich verschoben',
         'up_to_date' => 'aktuell ✅',
         'root' => 'Stammverzeichnis',

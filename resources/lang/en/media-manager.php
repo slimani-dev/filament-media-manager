@@ -85,6 +85,7 @@ return [
         'no_tags' => 'No tags',
         'please_select_at_least_one_file' => 'Please select at least one file',
         'items_deleted_successfully' => 'Items deleted successfully',
+        'delete_not_allowed' => '{1} You are not allowed to delete this item.|[2,*] :count items were not deleted because you are not allowed to delete them.',
         'items_moved_successfully' => 'Items moved successfully',
         'up_to_date' => 'up to date ✅',
         'root' => 'Root',

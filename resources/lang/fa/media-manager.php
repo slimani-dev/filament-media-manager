@@ -80,6 +80,7 @@ return [
         'no_tags' => 'برچسبی وجود ندارد',
         'please_select_at_least_one_file' => 'لطفاً حداقل یک فایل را انتخاب کنید',
         'items_deleted_successfully' => 'موارد با موفقیت حذف شدند',
+        'delete_not_allowed' => '{1} شما اجازه حذف این مورد را ندارید.|[2,*] :count مورد حذف نشد زیرا اجازه حذف آنها را ندارید.',
         'items_moved_successfully' => 'موارد با موفقیت منتقل شدند',
         'up_to_date' => 'به‌روز ✅',
         'root' => 'ریشه',

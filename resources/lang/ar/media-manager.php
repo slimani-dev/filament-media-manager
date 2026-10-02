@@ -80,6 +80,7 @@ return [
         'no_tags' => 'لا توجد وسوم',
         'please_select_at_least_one_file' => 'يرجى تحديد ملف واحد على الأقل',
         'items_deleted_successfully' => 'تم حذف العناصر بنجاح',
+        'delete_not_allowed' => '{1} لا يُسمح لك بحذف هذا العنصر.|[2,*] لم يتم حذف :count عناصر لأنه لا يُسمح لك بحذفها.',
         'items_moved_successfully' => 'تم نقل العناصر بنجاح',
         'up_to_date' => 'مُحدث ✅',
         'root' => 'الرئيسي',

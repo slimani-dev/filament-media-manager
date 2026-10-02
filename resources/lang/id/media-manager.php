@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Tidak ada tag',
         'please_select_at_least_one_file' => 'Silakan pilih setidaknya satu file',
         'items_deleted_successfully' => 'Item berhasil dihapus',
+        'delete_not_allowed' => '{1} Anda tidak diizinkan menghapus item ini.|[2,*] :count item tidak dihapus karena Anda tidak diizinkan menghapusnya.',
         'items_moved_successfully' => 'Item berhasil dipindahkan',
         'up_to_date' => 'terbaru ✅',
         'root' => 'Root',

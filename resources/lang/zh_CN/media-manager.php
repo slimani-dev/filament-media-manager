@@ -80,6 +80,7 @@ return [
         'no_tags' => '没有标签',
         'please_select_at_least_one_file' => '请至少选择一个文件',
         'items_deleted_successfully' => '项目已成功删除',
+        'delete_not_allowed' => '{1} 您无权删除此项目。|[2,*] 由于您无权删除，:count 个项目未被删除。',
         'items_moved_successfully' => '项目已成功移动',
         'up_to_date' => '已是最新 ✅',
         'root' => '根目录',

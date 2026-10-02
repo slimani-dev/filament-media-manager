@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Geen tags',
         'please_select_at_least_one_file' => 'Selecteer minimaal één bestand',
         'items_deleted_successfully' => 'Items succesvol verwijderd',
+        'delete_not_allowed' => '{1} U mag dit item niet verwijderen.|[2,*] :count items zijn niet verwijderd omdat u ze niet mag verwijderen.',
         'items_moved_successfully' => 'Items succesvol verplaatst',
         'up_to_date' => 'up-to-date ✅',
         'root' => 'Hoofdmap',

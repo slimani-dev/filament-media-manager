@@ -80,6 +80,7 @@ return [
         'no_tags' => 'कोई टैग नहीं',
         'please_select_at_least_one_file' => 'कृपया कम से कम एक फ़ाइल चुनें',
         'items_deleted_successfully' => 'आइटम सफलतापूर्वक हटाए गए',
+        'delete_not_allowed' => '{1} आपको यह आइटम हटाने की अनुमति नहीं है।|[2,*] :count आइटम नहीं हटाए गए क्योंकि आपको उन्हें हटाने की अनुमति नहीं है।',
         'items_moved_successfully' => 'आइटम सफलतापूर्वक स्थानांतरित किए गए',
         'up_to_date' => 'अप-टू-डेट ✅',
         'root' => 'रूट',

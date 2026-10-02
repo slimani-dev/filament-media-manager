@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Etiket yok',
         'please_select_at_least_one_file' => 'Lütfen en az bir dosya seçin',
         'items_deleted_successfully' => 'Öğeler başarıyla silindi',
+        'delete_not_allowed' => '{1} Bu öğeyi silme izniniz yok.|[2,*] Silme izniniz olmadığı için :count öğe silinmedi.',
         'items_moved_successfully' => 'Öğeler başarıyla taşındı',
         'up_to_date' => 'güncel ✅',
         'root' => 'Kök',

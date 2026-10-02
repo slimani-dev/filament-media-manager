@@ -80,6 +80,7 @@ return [
         'no_tags' => '태그 없음',
         'please_select_at_least_one_file' => '하나 이상의 파일을 선택해 주세요',
         'items_deleted_successfully' => '항목이 성공적으로 삭제되었습니다',
+        'delete_not_allowed' => '{1} 이 항목을 삭제할 권한이 없습니다.|[2,*] 삭제 권한이 없어 :count개 항목이 삭제되지 않았습니다.',
         'items_moved_successfully' => '항목이 성공적으로 이동되었습니다',
         'up_to_date' => '최신 상태 ✅',
         'root' => '루트',

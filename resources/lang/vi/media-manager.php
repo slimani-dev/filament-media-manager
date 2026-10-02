@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Không có thẻ',
         'please_select_at_least_one_file' => 'Vui lòng chọn ít nhất một tệp',
         'items_deleted_successfully' => 'Các mục đã được xóa thành công',
+        'delete_not_allowed' => '{1} Bạn không được phép xóa mục này.|[2,*] :count mục chưa được xóa vì bạn không được phép xóa chúng.',
         'items_moved_successfully' => 'Các mục đã được di chuyển thành công',
         'up_to_date' => 'đã cập nhật ✅',
         'root' => 'Gốc',

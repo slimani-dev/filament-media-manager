@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Sin etiquetas',
         'please_select_at_least_one_file' => 'Selecciona al menos un archivo',
         'items_deleted_successfully' => 'Elementos eliminados correctamente',
+        'delete_not_allowed' => '{1} No tienes permiso para eliminar este elemento.|[2,*] No se eliminaron :count elementos porque no tienes permiso para eliminarlos.',
         'items_moved_successfully' => 'Elementos movidos correctamente',
         'up_to_date' => 'actualizado ✅',
         'root' => 'Raíz',

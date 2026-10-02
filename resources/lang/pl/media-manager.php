@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Brak tagów',
         'please_select_at_least_one_file' => 'Wybierz co najmniej jeden plik',
         'items_deleted_successfully' => 'Elementy zostały pomyślnie usunięte',
+        'delete_not_allowed' => '{1} Nie masz uprawnień do usunięcia tego elementu.|[2,*] Nie usunięto :count elementów, ponieważ nie masz uprawnień do ich usunięcia.',
         'items_moved_successfully' => 'Elementy zostały pomyślnie przeniesione',
         'up_to_date' => 'aktualne ✅',
         'root' => 'Główny',

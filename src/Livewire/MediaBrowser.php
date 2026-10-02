@@ -37,6 +37,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -690,8 +691,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
                             ->footerActions([
                                 $this->bulkMoveAction()
                                     ->visible(fn () => count($this->selectedItems) > 0),
-                                $this->bulkDeleteAction()
-                                    ->visible(fn () => count($this->selectedItems) > 0),
+                                $this->bulkDeleteAction(),
                                 $this->clearSelectionAction()
                                     ->visible(fn () => count($this->selectedItems) > 0),
                             ]),
@@ -702,6 +702,13 @@ class MediaBrowser extends Component implements HasActions, HasForms
     public function deleteFile(int $id): void
     {
         $file = $this->getFileModel()::find($id);
+
+        if ($file && ! $this->canDeleteItem($file)) {
+            $this->notifyDeleteNotAllowed(1);
+
+            return;
+        }
+
         if ($file) {
             $idToRemove = "file-{$id}";
             $this->selectedItems = collect($this->selectedItems)
@@ -1735,6 +1742,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
             ->modalHeading(__('media-manager::media-manager.messages.delete_selected_heading'))
             ->modalDescription(__('media-manager::media-manager.messages.delete_selected_description'))
             ->modalSubmitActionLabel(__('media-manager::media-manager.messages.yes_delete_them'))
+            ->visible(fn (): bool => count($this->selectedItems) > 0 && $this->hasDeletableSelection())
             ->action(fn () => $this->deleteSelectedItems());
     }
 
@@ -1966,6 +1974,8 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
     public function deleteSelectedItems(): void
     {
+        $refused = 0;
+
         foreach ($this->selectedItems as $itemKey) {
             if (! str_contains($itemKey, '-')) {
                 $itemKey = "file-{$itemKey}";
@@ -1975,16 +1985,24 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
             if ($type === 'folder') {
                 $folder = $this->getFolderModel()::find($id);
-                if ($folder) {
+                if ($folder && ! $this->canDeleteItem($folder)) {
+                    $refused++;
+                } elseif ($folder) {
                     // Recursive deletion of children and files
                     $this->recursiveDeleteFolder($folder);
                 }
             } else {
                 $file = $this->getFileModel()::find($id);
-                if ($file) {
+                if ($file && ! $this->canDeleteItem($file)) {
+                    $refused++;
+                } elseif ($file) {
                     $file->delete();
                 }
             }
+        }
+
+        if ($refused > 0) {
+            $this->notifyDeleteNotAllowed($refused);
         }
 
         $this->selectedItems = [];
@@ -1995,6 +2013,50 @@ class MediaBrowser extends Component implements HasActions, HasForms
         Notification::make()
             ->title(__('media-manager::media-manager.messages.items_deleted_successfully'))
             ->success()
+            ->send();
+    }
+
+    /**
+     * Apps that register a policy for the file or folder model decide who may
+     * delete (its `delete` ability); without a policy anyone may, as before.
+     */
+    public function canDeleteItem(Model $item): bool
+    {
+        if (Gate::getPolicyFor($item) === null) {
+            return true;
+        }
+
+        $user = auth()->user();
+
+        return $user !== null && Gate::forUser($user)->allows('delete', $item);
+    }
+
+    protected function hasDeletableSelection(): bool
+    {
+        foreach ($this->selectedItems as $itemKey) {
+            if (! str_contains($itemKey, '-')) {
+                $itemKey = "file-{$itemKey}";
+            }
+
+            [$type, $id] = explode('-', $itemKey);
+
+            $item = $type === 'folder'
+                ? $this->getFolderModel()::find($id)
+                : $this->getFileModel()::find($id);
+
+            if ($item && $this->canDeleteItem($item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function notifyDeleteNotAllowed(int $count): void
+    {
+        Notification::make()
+            ->title(trans_choice('media-manager::media-manager.messages.delete_not_allowed', $count, ['count' => $count]))
+            ->danger()
             ->send();
     }
 

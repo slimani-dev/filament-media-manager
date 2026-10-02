@@ -80,6 +80,7 @@ return [
         'no_tags' => 'タグなし',
         'please_select_at_least_one_file' => '少なくとも1つのファイルを選択してください',
         'items_deleted_successfully' => '項目を正常に削除しました',
+        'delete_not_allowed' => '{1} この項目を削除する権限がありません。|[2,*] 削除する権限がないため、:count 件の項目は削除されませんでした。',
         'items_moved_successfully' => '項目を正常に移動しました',
         'up_to_date' => '最新です ✅',
         'root' => 'ルート',

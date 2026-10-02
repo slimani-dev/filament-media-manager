@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Nessun tag',
         'please_select_at_least_one_file' => 'Seleziona almeno un file',
         'items_deleted_successfully' => 'Elementi eliminati con successo',
+        'delete_not_allowed' => '{1} Non sei autorizzato a eliminare questo elemento.|[2,*] :count elementi non sono stati eliminati perché non sei autorizzato a eliminarli.',
         'items_moved_successfully' => 'Elementi spostati con successo',
         'up_to_date' => 'aggiornato ✅',
         'root' => 'Radice',

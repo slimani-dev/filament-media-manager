@@ -80,6 +80,7 @@ return [
         'no_tags' => 'Žádné štítky',
         'please_select_at_least_one_file' => 'Vyberte prosím alespoň jeden soubor',
         'items_deleted_successfully' => 'Položky byly úspěšně smazány',
+        'delete_not_allowed' => '{1} Tuto položku nemáte oprávnění smazat.|[2,*] :count položek nebylo smazáno, protože k tomu nemáte oprávnění.',
         'items_moved_successfully' => 'Položky byly úspěšně přesunuty',
         'up_to_date' => 'aktuální ✅',
         'root' => 'Kořen',

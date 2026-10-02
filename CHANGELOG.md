@@ -2,6 +2,12 @@
 
 All notable changes to `filament-media-manager` will be documented in this file.
 
+## v0.17.0 - 2026-10-02
+
+### Added
+- **Delete authorization**: When the app registers a policy for the file or folder model, the media browser asks its `delete` ability before every single, bulk and folder delete, skips (and reports) items the user may not delete, and hides the bulk delete action when nothing selected is deletable. Without a policy, behaviour is unchanged.
+- **Translations**: `delete_not_allowed` message in all 20 supported languages.
+
 ## v0.16.2 - 2026-10-01
 
 ### Fixed
