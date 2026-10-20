@@ -245,6 +245,46 @@ it('can show all items', function () {
     expect($paginator->perPage())->toBe(13);
 });
 
+it('pages folders before files across page boundaries', function () {
+    for ($i = 1; $i <= 3; $i++) {
+        Folder::create(['name' => "Folder {$i}"]);
+    }
+
+    for ($i = 1; $i <= 12; $i++) {
+        File::create(['name' => sprintf('File %02d', $i)]);
+    }
+
+    $component = Livewire::test(MediaBrowser::class);
+
+    $firstPage = $component->get('items');
+    expect($firstPage->total())->toBe(15)
+        ->and(collect($firstPage->items())->pluck('name')->all())->toBe([
+            'Folder 1', 'Folder 2', 'Folder 3',
+            'File 01', 'File 02', 'File 03', 'File 04', 'File 05', 'File 06', 'File 07',
+        ]);
+
+    $component->call('gotoPage', 2, 'media_browser_page');
+
+    expect(collect($component->get('items')->items())->pluck('name')->all())
+        ->toBe(['File 08', 'File 09', 'File 10', 'File 11', 'File 12']);
+});
+
+it('locates an item on the page it sorts onto', function () {
+    Folder::create(['name' => 'A Folder']);
+
+    for ($i = 1; $i <= 12; $i++) {
+        File::create(['name' => sprintf('File %02d', $i)]);
+    }
+
+    $target = File::where('name', 'File 11')->first();
+
+    $component = Livewire::test(MediaBrowser::class)
+        ->call('locateItem', "file-{$target->id}");
+
+    expect(collect($component->get('items')->items())->pluck('name')->all())
+        ->toContain('File 11');
+});
+
 it('prevents selecting non accepted files in picker mode', function () {
     $user = User::create(['name' => 'Test User']);
     $pdfFile = File::create(['name' => 'PDF File', 'uploaded_by_user_id' => $user->id, 'mime_type' => 'application/pdf']);

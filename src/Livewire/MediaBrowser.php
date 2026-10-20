@@ -908,21 +908,29 @@ class MediaBrowser extends Component implements HasActions, HasForms
 
     public function getFoldersProperty()
     {
+        return $this->getFolderItemsQuery()?->get() ?? collect();
+    }
+
+    public function getMediaFilesProperty()
+    {
+        return $this->getFileItemsQuery()->get();
+    }
+
+    protected function getFolderItemsQuery()
+    {
         // Don't fetch folders if user specifically filters by file types or sizes
         if (($this->filterType || ($this->filterSizeMin !== null && $this->filterSizeMin !== '') || ($this->filterSizeMax !== null && $this->filterSizeMax !== '')) && ($this->search || $this->hasActiveFilters())) {
-            return collect();
+            return null;
         }
 
         $query = $this->getFolderModel()::query()
             ->with(['tags'])
             ->withCount(['children', 'files']);
 
-        $query = $this->applySearchAndFiltersAndDeepSearchToQuery($query, true);
-
-        return $query->get();
+        return $this->applySearchAndFiltersAndDeepSearchToQuery($query, true);
     }
 
-    public function getMediaFilesProperty()
+    protected function getFileItemsQuery()
     {
         $query = $this->getFileModel()::query()->with(['tags']);
 
@@ -949,10 +957,16 @@ class MediaBrowser extends Component implements HasActions, HasForms
             }
         }
 
-        return $query->get();
+        return $query;
     }
 
-    public function getItemsProperty()
+    /**
+     * Folder and file queries for the current view, each sorted in SQL.
+     * Folders always come before files.
+     *
+     * @return array{0: mixed, 1: mixed}
+     */
+    protected function getSortedItemQueries(): array
     {
         if ($this->showSelectedOnly) {
             $selectedFolderIds = [];
@@ -967,85 +981,70 @@ class MediaBrowser extends Component implements HasActions, HasForms
                 }
             }
 
-            $folders = $this->getFolderModel()::query()->whereIn('id', $selectedFolderIds)->with(['tags'])->withCount(['children', 'files'])->get();
-            $files = $this->getFileModel()::query()->whereIn('id', $selectedFileIds)->with(['tags'])->get();
-            $allItems = $folders->concat($files);
+            $folderQuery = $this->getFolderModel()::query()->whereIn('id', $selectedFolderIds)->with(['tags'])->withCount(['children', 'files']);
+            $fileQuery = $this->getFileModel()::query()->whereIn('id', $selectedFileIds)->with(['tags']);
         } else {
-            $folders = $this->getFoldersProperty();
-            $files = $this->getMediaFilesProperty();
-            $allItems = $folders->concat($files);
+            $folderQuery = $this->getFolderItemsQuery();
+            $fileQuery = $this->getFileItemsQuery();
         }
 
-        $sortProperty = $this->sortField ?: 'name';
-        if ($sortProperty === 'mime_type') {
-            $allItems = $allItems->map(function ($item) {
-                $item->sort_type = $item instanceof ($this->getFolderModel()) ? 'folder' : $item->mime_type;
+        $sortField = in_array($this->sortField, ['name', 'created_at', 'size', 'mime_type'], true) ? $this->sortField : 'name';
 
-                return $item;
-            });
-            $sortProperty = 'sort_type';
+        // Folders have no size or mime type, so those sorts order folders by name
+        $folderSortField = in_array($sortField, ['size', 'mime_type'], true) ? 'name' : $sortField;
+
+        if ($folderQuery) {
+            $this->applyItemSort($folderQuery, $folderSortField);
         }
 
-        $sortFlags = $sortProperty === 'name' ? (SORT_NATURAL | SORT_FLAG_CASE) : SORT_REGULAR;
+        $this->applyItemSort($fileQuery, $sortField);
 
-        $sortCallback = function ($item) use ($sortProperty) {
-            if ($sortProperty === 'created_at') {
-                return $item->created_at?->timestamp ?? 0;
-            }
+        return [$folderQuery, $fileQuery];
+    }
 
-            return $item->{$sortProperty} ?? '';
-        };
+    protected function applyItemSort($query, string $field): void
+    {
+        $direction = $this->sortDirection === 'desc' ? 'desc' : 'asc';
+        $column = $query->getModel()->qualifyColumn($field);
 
-        $allItems = $allItems->sort(function ($a, $b) use ($sortProperty, $sortCallback) {
-            // Folders always first (priority 0) then files (priority 1)
-            $aPriority = $a instanceof ($this->getFolderModel()) ? 0 : 1;
-            $bPriority = $b instanceof ($this->getFolderModel()) ? 0 : 1;
-
-            if ($aPriority !== $bPriority) {
-                return $aPriority <=> $bPriority;
-            }
-
-            // Same category? Apply standard sort
-            $valA = $sortCallback($a);
-            $valB = $sortCallback($b);
-
-            $result = ($sortProperty === 'name')
-                ? strnatcasecmp((string) $valA, (string) $valB)
-                : $valA <=> $valB;
-
-            return $this->sortDirection === 'desc' ? -$result : $result;
-        });
-
-        $allItems = $allItems->values();
-
-        // Manual pagination logic
-        $page = $this->getPage($this->getPageName());
-        $perPage = $this->perPage;
-
-        if ($perPage === 'all') {
-            $items = $allItems->mapWithKeys(fn ($item) => [
-                ($item instanceof ($this->getFolderModel()) ? 'folder-' : 'file-').$item->id => $item,
-            ]);
-
-            return new LengthAwarePaginator(
-                $items,
-                $allItems->count(),
-                $allItems->count() ?: 1,
-                1,
-                [
-                    'path' => Paginator::resolveCurrentPath(),
-                    'pageName' => $this->getPageName(),
-                ]
-            );
+        if ($field === 'name') {
+            $query->orderByRaw("LOWER({$query->getGrammar()->wrap($column)}) {$direction}");
+        } else {
+            $query->orderBy($column, $direction);
         }
-        $items = $allItems->forPage($page, $perPage)
+
+        $query->orderBy($query->getModel()->qualifyColumn('id'), $direction);
+    }
+
+    public function getItemsProperty()
+    {
+        [$folderQuery, $fileQuery] = $this->getSortedItemQueries();
+
+        $foldersCount = $folderQuery ? $folderQuery->toBase()->getCountForPagination() : 0;
+        $total = $foldersCount + $fileQuery->toBase()->getCountForPagination();
+
+        $page = $this->perPage === 'all' ? 1 : max(1, (int) $this->getPage($this->getPageName()));
+        $perPage = $this->perPage === 'all' ? ($total ?: 1) : max(1, (int) $this->perPage);
+        $offset = ($page - 1) * $perPage;
+
+        // Folders fill the start of the list, files follow
+        $folders = $folderQuery && $offset < $foldersCount
+            ? $folderQuery->offset($offset)->limit($perPage)->get()
+            : collect();
+
+        $filesLimit = $perPage - $folders->count();
+        $files = $filesLimit > 0
+            ? $fileQuery->offset(max(0, $offset - $foldersCount))->limit($filesLimit)->get()
+            : collect();
+
+        $items = $folders->concat($files)
             ->mapWithKeys(fn ($item) => [
                 ($item instanceof ($this->getFolderModel()) ? 'folder-' : 'file-').$item->id => $item,
             ]);
 
         return new LengthAwarePaginator(
             $items,
-            $allItems->count(),
+            $total,
             $perPage,
             $page,
             [
@@ -1585,50 +1584,16 @@ class MediaBrowser extends Component implements HasActions, HasForms
         // 3. Calculate page
         $perPage = (int) $this->perPage;
         if ($perPage > 0) {
-            $folders = $this->getFoldersProperty();
-            $files = $this->getMediaFilesProperty();
-            $allItems = $folders->concat($files);
+            [$folderQuery, $fileQuery] = $this->getSortedItemQueries();
 
-            // Re-apply sorting to match getItemsProperty
-            $sortProperty = $this->sortField ?: 'name';
-            if ($sortProperty === 'mime_type') {
-                $allItems = $allItems->map(function ($item) {
-                    $item->sort_type = $item instanceof ($this->getFolderModel()) ? 'folder' : $item->mime_type;
+            $folderIds = $folderQuery ? $folderQuery->pluck($folderQuery->getModel()->qualifyColumn('id')) : collect();
 
-                    return $item;
-                });
-                $sortProperty = 'sort_type';
+            if ($type === 'folder') {
+                $index = $folderIds->search(fn ($folderId) => $folderId == $id);
+            } else {
+                $index = $fileQuery->pluck($fileQuery->getModel()->qualifyColumn('id'))->search(fn ($fileId) => $fileId == $id);
+                $index = $index === false ? false : $folderIds->count() + $index;
             }
-
-            $sortCallback = function ($item) use ($sortProperty) {
-                if ($sortProperty === 'created_at') {
-                    return $item->created_at?->timestamp ?? 0;
-                }
-
-                return $item->{$sortProperty} ?? '';
-            };
-
-            $allItems = $allItems->sort(function ($a, $b) use ($sortProperty, $sortCallback) {
-                $aPriority = $a instanceof ($this->getFolderModel()) ? 0 : 1;
-                $bPriority = $b instanceof ($this->getFolderModel()) ? 0 : 1;
-
-                if ($aPriority !== $bPriority) {
-                    return $aPriority <=> $bPriority;
-                }
-
-                $valA = $sortCallback($a);
-                $valB = $sortCallback($b);
-
-                $result = ($sortProperty === 'name')
-                    ? strnatcasecmp((string) $valA, (string) $valB)
-                    : $valA <=> $valB;
-
-                return $this->sortDirection === 'desc' ? -$result : $result;
-            })->values();
-
-            $index = $allItems->search(function ($item) use ($type, $id) {
-                return ($item instanceof ($this->getFolderModel()) ? 'folder' : 'file') === $type && $item->id == $id;
-            });
 
             if ($index !== false) {
                 $page = floor($index / $perPage) + 1;
