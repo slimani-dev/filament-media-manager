@@ -2,6 +2,11 @@
 
 All notable changes to `filament-media-manager` will be documented in this file.
 
+## v0.17.1 - 2026-10-20
+
+### Fixed
+- **Large folder performance**: The media browser pages folders and files in SQL instead of loading and sorting every item of the current folder in PHP, so a folder with 20,000 files renders in milliseconds instead of seconds. Locating a selected item computes its page from sorted IDs. Name sorting is now alphabetical (case-insensitive) rather than natural, and size or type sorting orders folders by name.
+
 ## v0.17.0 - 2026-10-02
 
 ### Added
