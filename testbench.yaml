@@ -1,0 +1,15 @@
+# Lets Larastan boot the package (views, config) when it analyses the code.
+providers:
+  - Livewire\LivewireServiceProvider
+  - BladeUI\Icons\BladeIconsServiceProvider
+  - BladeUI\Heroicons\BladeHeroiconsServiceProvider
+  - Filament\Support\SupportServiceProvider
+  - Filament\Actions\ActionsServiceProvider
+  - Filament\Schemas\SchemasServiceProvider
+  - Filament\Forms\FormsServiceProvider
+  - Filament\Infolists\InfolistsServiceProvider
+  - Filament\Notifications\NotificationsServiceProvider
+  - Filament\Widgets\WidgetsServiceProvider
+  - Filament\FilamentServiceProvider
+  - Spatie\MediaLibrary\MediaLibraryServiceProvider
+  - Slimani\MediaManager\MediaManagerServiceProvider

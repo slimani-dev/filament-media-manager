@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Property Slimani\\MediaManager\\Components\\Section\:\:\$view \(view\-string\) does not accept default value of type string\.$#'
-			identifier: property.defaultValue
-			count: 1
-			path: src/Components/Section.php
-
-		-
 			message: '#^Trait Slimani\\MediaManager\\Concerns\\InteractsWithMediaFiles is used zero times and is not analysed\.$#'
 			identifier: trait.unused
 			count: 1
@@ -15,12 +9,6 @@ parameters:
 		-
 			message: '#^Anonymous function never returns null so it can be removed from the return type\.$#'
 			identifier: return.unusedType
-			count: 1
-			path: src/Form/Components/MediaFileUpload.php
-
-		-
-			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Form/Components/MediaFileUpload.php
 
@@ -82,18 +70,6 @@ parameters:
 			message: '#^Call to an undefined method Filament\\Contracts\\Plugin\:\:getDisk\(\)\.$#'
 			identifier: method.notFound
 			count: 2
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: src/Livewire/MediaBrowser.php
-
-		-
-			message: '#^Parameter \#1 \$view of method Filament\\Support\\Components\\ViewComponent\:\:view\(\) expects view\-string\|null, string given\.$#'
-			identifier: argument.type
-			count: 1
 			path: src/Livewire/MediaBrowser.php
 
 		-

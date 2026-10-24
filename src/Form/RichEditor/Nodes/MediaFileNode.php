@@ -62,7 +62,7 @@ class MediaFileNode extends Node
         $file = $fileModel::find($node->attrs->id);
         $url = $file?->getUrl() ?? '#';
 
-        $html = View::make(/** @var view-string */ 'media-manager::rich-editor.nodes.media-file', [
+        $html = View::make('media-manager::rich-editor.nodes.media-file', [
             'id' => $node->attrs->id,
             'name' => $node->attrs->name,
             'extension' => $node->attrs->extension,
