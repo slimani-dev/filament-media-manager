@@ -3,6 +3,7 @@
 namespace Slimani\MediaManager\Form;
 
 use Filament\Actions\Action;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Livewire;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Slimani\MediaManager\Livewire\MediaBrowser;
@@ -367,8 +369,66 @@ class MediaPicker extends FileUpload
         });
     }
 
+    /**
+     * Rules that check an uploaded file (size, type, dimensions). They apply to new uploads
+     * only: the picked media are file ids, already validated when they were stored.
+     */
+    protected const FILE_VALIDATION_RULES = ['file', 'image', 'mimes', 'mimetypes', 'extensions', 'dimensions', 'max', 'min', 'size'];
+
+    /**
+     * The state is a file id (or a list of ids), not an upload: FileUpload's rules would reject it.
+     * Keeps required(), minFiles()/maxFiles() and the rules added with rule()/rules().
+     *
+     * @return array<mixed>
+     */
     public function getValidationRules(): array
     {
-        return []; // Bypass strict FileUpload validation
+        $rules = [$this->getRequiredValidationRule()];
+
+        if ($this->isMultiple()) {
+            $rules[] = 'array';
+
+            if (filled($count = $this->getMaxFiles())) {
+                $rules[] = "max:{$count}";
+            }
+
+            if (filled($count = $this->getMinFiles())) {
+                $rules[] = "min:{$count}";
+            }
+        }
+
+        $fileRules = [];
+
+        // The field's own rules (Field, not FileUpload): drop its required/nullable, already added.
+        foreach (array_slice(Field::getValidationRules(), 1) as $rule) {
+            if (is_string($rule) && in_array(strtolower(explode(':', $rule)[0]), self::FILE_VALIDATION_RULES, true)) {
+                $fileRules[] = $rule;
+            } else {
+                $rules[] = $rule;
+            }
+        }
+
+        if ($fileRules !== []) {
+            $rules[] = function (string $attribute, mixed $value, \Closure $fail) use ($fileRules): void {
+                $uploads = array_values(array_filter(Arr::wrap($value), fn (mixed $file): bool => $file instanceof TemporaryUploadedFile));
+
+                if ($uploads === []) {
+                    return;
+                }
+
+                $validator = Validator::make(
+                    ['files' => $uploads],
+                    ['files.*' => ['file', ...$fileRules]],
+                    [],
+                    ['files.*' => $this->getValidationAttribute()],
+                );
+
+                if ($validator->fails()) {
+                    $fail($validator->errors()->first());
+                }
+            };
+        }
+
+        return $rules;
     }
 }

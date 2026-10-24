@@ -9,3 +9,8 @@ parameters:
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
+    ignoreErrors:
+        # Cross-version guards (Filament ^4.0|^5.0): always true on the analysed version only.
+        -
+            identifier: function.alreadyNarrowedType
+            path: src/Infolists/Components/RepeatableEntry.php

@@ -3,6 +3,7 @@
 namespace Slimani\MediaManager\Infolists\Components;
 
 use Filament\Infolists\Components\ImageEntry;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Slimani\MediaManager\MediaManagerPlugin;
 
@@ -22,7 +23,10 @@ class MediaImageEntry extends ImageEntry
         return $this->evaluate($this->conversion) ?? 'thumb';
     }
 
-    public function getImageUrl(mixed $state = null): ?string
+    /**
+     * Filament 5.10 added `$relatedRecord`; declaring it keeps the signature compatible with both v4 and v5.
+     */
+    public function getImageUrl(mixed $state = null, ?Model $relatedRecord = null): ?string
     {
         if (blank($state)) {
             $state = $this->getState();
@@ -39,7 +43,12 @@ class MediaImageEntry extends ImageEntry
             $state = $fileModel::find($state);
         }
 
-        return ($state instanceof ($this->getFileModel())) ? $state->getUrl($this->getConversion()) : parent::getImageUrl($state);
+        if ($state instanceof ($this->getFileModel())) {
+            return $state->getUrl($this->getConversion());
+        }
+
+        // Filament 4's parent takes only the state; PHP ignores the extra argument there.
+        return parent::getImageUrl($state, $relatedRecord);
     }
 
     protected function getFileModel(): string

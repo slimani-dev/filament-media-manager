@@ -3,6 +3,7 @@
 namespace Slimani\MediaManager\Tables\Columns;
 
 use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Slimani\MediaManager\Models\File;
 
@@ -22,7 +23,10 @@ class MediaColumn extends ImageColumn
         return $this->evaluate($this->conversion) ?? 'thumb';
     }
 
-    public function getImageUrl(mixed $state = null): ?string
+    /**
+     * Filament 5.10 added `$relatedRecord`; declaring it keeps the signature compatible with both v4 and v5.
+     */
+    public function getImageUrl(mixed $state = null, ?Model $relatedRecord = null): ?string
     {
         $state ??= $this->getState();
 

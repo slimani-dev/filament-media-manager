@@ -2,6 +2,12 @@
 
 All notable changes to `filament-media-manager` will be documented in this file.
 
+## v0.17.2 - 2026-10-24
+
+### Fixed
+- **Filament 5.10 compatibility**: `MediaColumn` and `MediaImageEntry` crashed with "Declaration of …::getImageUrl(mixed $state = null) must be compatible with …::getImageUrl(?string $state = null, ?Model $relatedRecord = null)". Both now declare the new `$relatedRecord` parameter and still work on Filament 4.
+- **MediaPicker validation**: `required()`, `minFiles()` / `maxFiles()` and rules added with `rule()` / `rules()` were silently ignored, because the picker dropped every validation rule. They now apply to the picked file ids. File rules (`image()`, `acceptedFileTypes()`, `maxSize()`…) still check only new uploads. Pickers marked `required()` now really require a file.
+
 ## v0.17.1 - 2026-10-20
 
 ### Fixed
