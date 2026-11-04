@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -71,8 +72,6 @@ class MediaBrowser extends Component implements HasActions, HasForms
     }
     use WithFileUploads;
     use WithPagination;
-
-    public ?string $serializedOnSelect = null;
 
     public function clearCachedSchemas(): void
     {
@@ -129,10 +128,12 @@ class MediaBrowser extends Component implements HasActions, HasForms
     // Picker State
     public bool $showDetails = true;
 
+    #[Locked]
     public bool $isPicker = false;
 
     public bool $multiple = false;
 
+    #[Locked]
     public ?string $pickerId = null;
 
     // Filters State
@@ -180,10 +181,12 @@ class MediaBrowser extends Component implements HasActions, HasForms
         ];
     }
 
+    #[Locked]
     public ?string $statePath = null;
 
     public ?Collection $files = null;
 
+    #[Locked]
     public ?array $acceptedFileTypes = [];
 
     public function updatedSortField(): void
@@ -233,7 +236,7 @@ class MediaBrowser extends Component implements HasActions, HasForms
         bool $multiple = false,
         ?string $pickerId = null,
         array $selectedItems = [],
-        ?string $onSelect = null,
+        mixed $onSelect = null, // @deprecated Ignored since v0.17.3; will be removed in the next minor release.
         ?string $statePath = null,
         ?array $acceptedFileTypes = [],
         ?int $currentFolderId = null
@@ -242,7 +245,6 @@ class MediaBrowser extends Component implements HasActions, HasForms
         $this->multiple = $multiple;
         $this->pickerId = $pickerId;
         $this->selectedItems = $selectedItems;
-        $this->serializedOnSelect = $onSelect;
         $this->statePath = $statePath;
         $this->acceptedFileTypes = $acceptedFileTypes;
 
@@ -251,10 +253,6 @@ class MediaBrowser extends Component implements HasActions, HasForms
         }
 
         $this->currentFolderId = $currentFolderId;
-
-        if ($this->serializedOnSelect) {
-            $this->executeOnSelect();
-        }
 
         if ($this->currentFolderId) {
             $this->currentFolder = $this->getFolderModel()::query()->with(['tags'])->withCount(['children', 'files'])->find($this->currentFolderId);
@@ -785,29 +783,6 @@ class MediaBrowser extends Component implements HasActions, HasForms
         }
     }
 
-    protected function executeOnSelect(): void
-    {
-        if (! $this->serializedOnSelect) {
-            return;
-        }
-
-        try {
-            /** @var \Closure $callback */
-            $callback = unserialize($this->serializedOnSelect)->getClosure();
-
-            $fileIds = collect($this->selectedItems)
-                ->filter(fn ($i) => str_starts_with($i, 'file-'))
-                ->map(fn ($i) => str_replace('file-', '', $i))
-                ->toArray();
-
-            $files = $this->getFileModel()::whereIn('id', $fileIds)->get();
-
-            $callback($files, $this);
-        } catch (\Throwable $e) {
-            Log::error('Failed to execute onSelect closure: '.$e->getMessage());
-        }
-    }
-
     protected function syncState(): void
     {
         $ids = collect($this->selectedItems)
@@ -824,8 +799,6 @@ class MediaBrowser extends Component implements HasActions, HasForms
         }
 
         $this->dispatch('media-selection-synced', ids: $ids);
-
-        $this->executeOnSelect();
     }
 
     public function isAccepted(Model $file): bool

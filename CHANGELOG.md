@@ -2,6 +2,15 @@
 
 All notable changes to `filament-media-manager` will be documented in this file.
 
+## v0.17.3 - 2026-11-04
+
+### Security
+- **Remote code execution in `MediaBrowser`** ([GHSA-cvc9-9426-vrhg](https://github.com/slimani-dev/filament-media-manager/security/advisories/GHSA-cvc9-9426-vrhg)): The media browser kept an unused, serialized `onSelect` callback in a public Livewire property and passed it to `unserialize()` without restricting classes. Any user who could open the media browser could overwrite it and instantiate arbitrary objects on the server, leading to remote code execution. The property and the callback are removed. All versions from v0.1.0 to v0.17.2 are affected; upgrade immediately.
+- **Locked picker configuration**: `isPicker`, `pickerId`, `statePath` and `acceptedFileTypes` can no longer be changed by the browser, so a client cannot widen the accepted file types or redirect the picked ids to another field.
+
+### Deprecated
+- The `onSelect` argument of `MediaBrowser::mount()` is ignored and will be removed in the next minor release. Listen for the `media-selection-synced` event instead.
+
 ## v0.17.2 - 2026-10-24
 
 ### Fixed

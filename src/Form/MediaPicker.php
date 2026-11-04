@@ -156,7 +156,6 @@ class MediaPicker extends FileUpload
                             'pickerId' => $pickerId,
                             'statePath' => $statePath,
                             'acceptedFileTypes' => $component->getAcceptedFileTypes(),
-                            'onSelect' => null,
                             'currentFolderId' => (int) $currentFolderId ?: null,
                         ])->key("media-browser-{$pickerId}-{$actionIndex}"),
 
